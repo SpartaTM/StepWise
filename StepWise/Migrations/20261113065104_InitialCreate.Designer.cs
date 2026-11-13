@@ -11,7 +11,7 @@ using StepWise.Data;
 namespace StepWise.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261113002044_InitialCreate")]
+    [Migration("20261113065104_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,6 +25,10 @@ namespace StepWise.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -61,6 +65,10 @@ namespace StepWise.Migrations
                     b.Property<DateTime>("StartedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InstructionId");
@@ -74,8 +82,8 @@ namespace StepWise.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ProgressId")
                         .HasColumnType("INTEGER");
@@ -122,7 +130,7 @@ namespace StepWise.Migrations
             modelBuilder.Entity("StepWise.Models.Progress", b =>
                 {
                     b.HasOne("StepWise.Models.Instruction", "Instruction")
-                        .WithMany("Progresses")
+                        .WithMany()
                         .HasForeignKey("InstructionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -139,7 +147,7 @@ namespace StepWise.Migrations
                         .IsRequired();
 
                     b.HasOne("StepWise.Models.Step", "Step")
-                        .WithMany("ProgressSteps")
+                        .WithMany()
                         .HasForeignKey("StepId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -162,17 +170,10 @@ namespace StepWise.Migrations
 
             modelBuilder.Entity("StepWise.Models.Instruction", b =>
                 {
-                    b.Navigation("Progresses");
-
                     b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("StepWise.Models.Progress", b =>
-                {
-                    b.Navigation("ProgressSteps");
-                });
-
-            modelBuilder.Entity("StepWise.Models.Step", b =>
                 {
                     b.Navigation("ProgressSteps");
                 });
