@@ -1,6 +1,0 @@
-@StepWise_HostAddress = http://localhost:5198
-
-GET {{StepWise_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
