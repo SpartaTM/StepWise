@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using StepWise.Data;
 namespace StepWise
 {
     public class Program
@@ -5,6 +7,9 @@ namespace StepWise
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite(
+                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

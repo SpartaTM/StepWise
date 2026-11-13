@@ -361,3 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# JetBrains Rider
+.idea/
+
+# Local SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Local environment settings
+.env
+.env.*
+!.env.example
