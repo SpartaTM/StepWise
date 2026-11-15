@@ -1,0 +1,18 @@
+﻿@model List<StepWise.ViewModels.InstructionListItemViewModel>
+@{
+    ViewData["Title"] = "Каталог инструкций";
+}
+
+<h1>Каталог инструкций</h1>
+
+<div class="instruction-grid">
+    @foreach (var item in Model)
+    {
+        <div class="instruction-card">
+            <h3>@item.Title</h3>
+            <p class="category">@item.Category</p>
+            <p>Шагов: @item.StepsCount</p>
+            <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
+        </div>
+    }
+</div>
