@@ -1,0 +1,23 @@
+﻿@model StepWise.ViewModels.InstructionDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<a asp-controller="Instructions" asp-action="Index">← Назад в каталог</a>
+
+<h1>@Model.Title</h1>
+<p class="category">@Model.Category</p>
+<p>@Model.Description</p>
+
+<h2>Шаги (@Model.Steps.Count)</h2>
+<ol class="steps-list">
+    @foreach (var step in Model.Steps)
+    {
+        <li>
+            <strong>@step.Title</strong>
+            <p>@step.Description</p>
+        </li>
+    }
+</ol>
+
+<a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn-start">Начать прохождение</a>
