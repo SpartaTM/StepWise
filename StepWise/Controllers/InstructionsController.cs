@@ -16,9 +16,15 @@ public class InstructionsController : Controller
     }
 
     // /Instructions  — каталог
-    public IActionResult Index()
+    public IActionResult Index(string? category)
     {
-        var items = _db.Instructions
+        var query = _db.Instructions.AsNoTracking();
+
+        // Если категория выбрана, оставляем только её
+        if (!string.IsNullOrEmpty(category))
+            query = query.Where(i => i.Category == category);
+
+        var items = query
             .Select(i => new InstructionListItemViewModel
             {
                 Id = i.Id,
@@ -27,6 +33,14 @@ public class InstructionsController : Controller
                 StepsCount = i.Steps.Count
             })
             .ToList();
+
+        // Список всех категорий для кнопок фильтра
+        ViewBag.Categories = _db.Instructions
+            .Select(i => i.Category)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+        ViewBag.SelectedCategory = category;
 
         return View(items);
     }

@@ -1,10 +1,18 @@
 ﻿@model List<StepWise.ViewModels.InstructionListItemViewModel>
 @{
     ViewData["Title"] = "Каталог инструкций";
+    var categories = (List<string>)ViewBag.Categories;
+    var selected = (string?)ViewBag.SelectedCategory;
 }
 
 <h1>Каталог инструкций</h1>
-
+<div class="category-filter">
+    <a asp-action="Index" class="@(string.IsNullOrEmpty(selected) ? "active" : "")">Все</a>
+    @foreach (var c in categories)
+    {
+        <a asp-action="Index" asp-route-category="@c" class="@(c == selected ? "active" : "")">@c</a>
+    }
+</div>
 <div class="instruction-grid">
     @foreach (var item in Model)
     {
