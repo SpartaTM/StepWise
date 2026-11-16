@@ -1,11 +1,17 @@
 ﻿@model StepWise.ViewModels.InstructionFormViewModel
 @{
-    ViewData["Title"] = "Новая инструкция";
+    var isEdit = Model.Id.HasValue;
+    ViewData["Title"] = isEdit ? "Редактирование инструкции" : "Новая инструкция";
 }
+
+<h1>@ViewData["Title"]</h1>
+
+
 
 <h1>Новая инструкция</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="error"></div>
 
     <div class="form-group">
@@ -32,12 +38,13 @@
     @for (int i = 0; i < Model.Steps.Count; i++)
     {
         <div class="step-form-item">
+            <input type="hidden" asp-for="Steps[i].Id" />
             <h4>Шаг @(i + 1)</h4>
             <input asp-for="Steps[i].Title" placeholder="Название шага" />
             <textarea asp-for="Steps[i].Description" rows="2" placeholder="Описание шага"></textarea>
         </div>
     }
 
-    <button type="submit">Сохранить</button>
+    <button type="submit">@(isEdit ? "Сохранить изменения" : "Создать")</button>
     <a asp-action="Index">Отмена</a>
 </form>

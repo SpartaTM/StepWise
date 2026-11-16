@@ -43,7 +43,7 @@ public class AuthorController : Controller
     {
         var model = new InstructionFormViewModel();
         FillEmptySteps(model);
-        return View(model);
+        return View("Form", model); ;
     }
 
     // Нажата кнопка «Сохранить»
@@ -62,7 +62,7 @@ public class AuthorController : Controller
         if (!ModelState.IsValid)
         {
             FillEmptySteps(model);
-            return View(model);   // показываем форму снова с ошибками
+            return View("Form", model); ;   // показываем форму снова с ошибками
         }
 
         var instruction = new Instruction
@@ -86,7 +86,115 @@ public class AuthorController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    // /Author/Edit/5 — форма с текущими данными
+    public IActionResult Edit(int id)
+    {
+        var instruction = _db.Instructions
+            .AsNoTracking()
+            .Include(i => i.Steps)
+            .FirstOrDefault(i => i.Id == id && i.AuthorId == CurrentAuthorId);
 
+        if (instruction == null)
+            return NotFound();
+
+        var model = new InstructionFormViewModel
+        {
+            Id = instruction.Id,
+            Title = instruction.Title,
+            Description = instruction.Description,
+            Category = instruction.Category,
+            Steps = instruction.Steps
+                .OrderBy(s => s.Order)
+                .Select(s => new StepFormItem
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Description = s.Description
+                })
+                .ToList()
+        };
+
+        FillEmptySteps(model);
+        return View("Form", model);
+    }
+
+    // Нажата кнопка «Сохранить изменения»
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, InstructionFormViewModel model)
+    {
+        var instruction = _db.Instructions
+            .Include(i => i.Steps)
+            .FirstOrDefault(i => i.Id == id && i.AuthorId == CurrentAuthorId);
+
+        if (instruction == null)
+            return NotFound();
+
+        var filledSteps = model.Steps
+            .Where(s => !string.IsNullOrWhiteSpace(s.Title))
+            .ToList();
+
+        if (filledSteps.Count == 0)
+            ModelState.AddModelError(string.Empty, "Добавьте хотя бы один шаг");
+
+        if (!ModelState.IsValid)
+        {
+            FillEmptySteps(model);
+            return View("Form", model);
+        }
+
+        instruction.Title = model.Title.Trim();
+        instruction.Description = model.Description.Trim();
+        instruction.Category = model.Category.Trim();
+
+        // 1. Удаляем шаги, которые автор очистил в форме
+        var keepIds = filledSteps
+            .Where(s => s.Id.HasValue)
+            .Select(s => s.Id!.Value)
+            .ToList();
+        var toRemove = instruction.Steps.Where(s => !keepIds.Contains(s.Id)).ToList();
+        _db.Steps.RemoveRange(toRemove);
+
+        // 2. Обновляем существующие шаги и добавляем новые
+        for (int index = 0; index < filledSteps.Count; index++)
+        {
+            var item = filledSteps[index];
+
+            var step = item.Id.HasValue
+                ? instruction.Steps.FirstOrDefault(s => s.Id == item.Id.Value)
+                : null;
+
+            if (step == null)
+            {
+                step = new Step();
+                instruction.Steps.Add(step);
+            }
+
+            step.Title = item.Title!.Trim();
+            step.Description = item.Description?.Trim() ?? string.Empty;
+            step.Order = index + 1;
+        }
+
+        _db.SaveChanges();
+        return RedirectToAction(nameof(Index));
+    }
+
+    // Кнопка «Удалить»
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Delete(int id)
+    {
+        var instruction = _db.Instructions
+            .FirstOrDefault(i => i.Id == id && i.AuthorId == CurrentAuthorId);
+
+        if (instruction == null)
+            return NotFound();
+
+        _db.Instructions.Remove(instruction);
+        _db.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
     // Добавляет пустые поля, чтобы всегда было 10 штук
     private static void FillEmptySteps(InstructionFormViewModel model)
     {
