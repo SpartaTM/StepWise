@@ -30,6 +30,11 @@ else
                     <td>@item.StepsCount</td>
                     <td>
                         <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                              onsubmit="return confirm('Удалить инструкцию?');" style="display:inline">
+                            <button type="submit">Удалить</button>
+                        </form>
                     </td>
                 </tr>
             }
