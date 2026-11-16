@@ -1,0 +1,38 @@
+﻿@model List<StepWise.ViewModels.InstructionListItemViewModel>
+@{
+    ViewData["Title"] = "Мои инструкции";
+}
+
+<h1>Мои инструкции</h1>
+<a asp-action="Create" class="btn-create">+ Создать инструкцию</a>
+
+@if (!Model.Any())
+{
+    <p>Пока нет ни одной инструкции. Создайте первую.</p>
+}
+else
+{
+    <table class="author-table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Шагов</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Category</td>
+                    <td>@item.StepsCount</td>
+                    <td>
+                        <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
