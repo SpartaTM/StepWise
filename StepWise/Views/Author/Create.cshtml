@@ -1,0 +1,43 @@
+﻿@model StepWise.ViewModels.InstructionFormViewModel
+@{
+    ViewData["Title"] = "Новая инструкция";
+}
+
+<h1>Новая инструкция</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="error"></div>
+
+    <div class="form-group">
+        <label asp-for="Title">Название</label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Описание</label>
+        <textarea asp-for="Description" rows="3"></textarea>
+        <span asp-validation-for="Description" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category">Категория</label>
+        <input asp-for="Category" />
+        <span asp-validation-for="Category" class="error"></span>
+    </div>
+
+    <h2>Шаги</h2>
+    <p>Заполните нужные шаги, пустые будут пропущены.</p>
+
+    @for (int i = 0; i < Model.Steps.Count; i++)
+    {
+        <div class="step-form-item">
+            <h4>Шаг @(i + 1)</h4>
+            <input asp-for="Steps[i].Title" placeholder="Название шага" />
+            <textarea asp-for="Steps[i].Description" rows="2" placeholder="Описание шага"></textarea>
+        </div>
+    }
+
+    <button type="submit">Сохранить</button>
+    <a asp-action="Index">Отмена</a>
+</form>
