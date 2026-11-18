@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
 using StepWise.Models;
 using StepWise.ViewModels;
+using StepWise.Services;
 
 namespace StepWise.Controllers;
 
@@ -10,14 +11,15 @@ public class AuthorController : Controller
 {
 
     private readonly AppDbContext _db;
-
+    private readonly ICurrentUser _currentUser;
     // Временно. На 19.11 заменим на значение из куки
-    private const string CurrentAuthorId = "guest";
+    private string CurrentAuthorId => _currentUser.UserId;
     private const int StepSlots = 10;
 
-    public AuthorController(AppDbContext db)
+    public AuthorController(AppDbContext db, ICurrentUser currentUser)
     {
         _db = db;
+        _currentUser = currentUser;
     }
 
     // /Author — список моих инструкций
