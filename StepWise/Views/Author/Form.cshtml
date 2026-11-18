@@ -8,7 +8,6 @@
 
 
 
-<h1>Новая инструкция</h1>
 
 <form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post">
     <input type="hidden" asp-for="Id" />
@@ -28,7 +27,13 @@
 
     <div class="form-group">
         <label asp-for="Category">Категория</label>
-        <input asp-for="Category" />
+        <input asp-for="Category" list="category-list" />
+        <datalist id="category-list">
+            @foreach(var c in (List<string>)ViewBag.Categories)
+                {
+                    <option value="@c"></option>
+                }
+        </datalist>
         <span asp-validation-for="Category" class="error"></span>
     </div>
 
@@ -42,6 +47,8 @@
             <h4>Шаг @(i + 1)</h4>
             <input asp-for="Steps[i].Title" placeholder="Название шага" />
             <textarea asp-for="Steps[i].Description" rows="2" placeholder="Описание шага"></textarea>
+            <span asp-validation-for="Steps[i].Title" class="error"></span>
+            <span asp-validation-for="Steps[i].Description" class="error"></span>
         </div>
     }
 

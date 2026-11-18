@@ -8,6 +8,7 @@ namespace StepWise.Controllers;
 
 public class AuthorController : Controller
 {
+
     private readonly AppDbContext _db;
 
     // Временно. На 19.11 заменим на значение из куки
@@ -42,8 +43,9 @@ public class AuthorController : Controller
     public IActionResult Create()
     {
         var model = new InstructionFormViewModel();
-        FillEmptySteps(model);
-        return View("Form", model); ;
+
+        PrepareForm(model);
+        return View("Form", model); 
     }
 
     // Нажата кнопка «Сохранить»
@@ -61,8 +63,8 @@ public class AuthorController : Controller
 
         if (!ModelState.IsValid)
         {
-            FillEmptySteps(model);
-            return View("Form", model); ;   // показываем форму снова с ошибками
+            PrepareForm(model);
+            return View("Form", model);   // показываем форму снова с ошибками
         }
 
         var instruction = new Instruction
@@ -114,7 +116,7 @@ public class AuthorController : Controller
                 .ToList()
         };
 
-        FillEmptySteps(model);
+        PrepareForm(model);
         return View("Form", model);
     }
 
@@ -139,7 +141,7 @@ public class AuthorController : Controller
 
         if (!ModelState.IsValid)
         {
-            FillEmptySteps(model);
+            PrepareForm(model);
             return View("Form", model);
         }
 
@@ -196,9 +198,16 @@ public class AuthorController : Controller
         return RedirectToAction(nameof(Index));
     }
     // Добавляет пустые поля, чтобы всегда было 10 штук
-    private static void FillEmptySteps(InstructionFormViewModel model)
+    private void PrepareForm(InstructionFormViewModel model)
     {
-        while (model.Steps.Count < StepSlots)
+        while(model.Steps.Count < StepSlots)
             model.Steps.Add(new StepFormItem());
+
+        ViewBag.Categories = _db.Instructions
+            .Select(i => i.Category)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+
     }
 }
