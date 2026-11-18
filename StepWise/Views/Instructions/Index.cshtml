@@ -3,6 +3,7 @@
     ViewData["Title"] = "Каталог инструкций";
     var categories = (List<string>)ViewBag.Categories;
     var selected = (string?)ViewBag.SelectedCategory;
+
 }
 
 <h1>Каталог инструкций</h1>
@@ -20,6 +21,10 @@
             <h3>@item.Title</h3>
             <p class="category">@item.Category</p>
             <p>Шагов: @item.StepsCount</p>
+            @if (item.RatingsCount > 0)
+            {
+                <p class="rating">★ @item.AverageRating.ToString("0.0") (@item.RatingsCount)</p>
+            }
             <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
         </div>
     }

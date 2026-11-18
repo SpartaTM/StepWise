@@ -1,63 +1,34 @@
-﻿
-@model StepWise.Models.Instruction
-
+﻿@model StepWise.ViewModels.PlayerViewModel
 @{
-    ViewData["Title"] = "Прохождение инструкции";
-
-    var completedStepIds = (List<int>)ViewBag.CompletedStepIds;
-    int progressPercent = (int)ViewBag.ProgressPercent;
-    int progressId = (int)ViewBag.ProgressId;
+    ViewData["Title"] = "Прохождение: " + Model.Title;
 }
+@Html.AntiForgeryToken()
 
+<a asp-controller="Instructions" asp-action="Details" asp-route-id="@Model.InstructionId">← К описанию</a>
 <h1>@Model.Title</h1>
 
-<p>@Model.Description</p>
+<div class="progress-wrap">
+    <div class="progress-bar" style="width: @Model.Percent%"></div>
+</div>
+<p class="progress-text">@Model.DoneCount из @Model.TotalCount (@Model.Percent%)</p>
+<p class="completed-message" hidden="@(!Model.IsCompleted)">Инструкция пройдена!</p>
 
-<p>Прогресс: @progressPercent%</p>
-
-<progress value="@progressPercent" max="100"></progress>
-
-<h2>Шаги инструкции</h2>
-
-<ol>
-    @foreach (var step in Model.Steps.OrderBy(s => s.Order))
+<ul class="player-steps"
+    data-instruction-id="@Model.InstructionId"
+    data-toggle-url="@Url.Action("ToggleStep", "Player")">
+    @foreach (var step in Model.Steps)
     {
-        bool isCompleted = completedStepIds.Contains(step.Id);
-
-        <li>
-            <h3>@step.Title</h3>
-
+        <li class="player-step @(step.IsDone ? "done" : "")" data-step-id="@step.Id">
+            <label>
+                <input type="checkbox" checked="@step.IsDone" />
+                <span class="step-number">@step.Order.</span>
+                <strong>@step.Title</strong>
+            </label>
             <p>@step.Description</p>
-
-            @if (isCompleted)
-            {
-                <p>Выполнено</p>
-            }
-
-            <form asp-controller="Player"
-                  asp-action="ToggleStep"
-                  method="post">
-
-                @Html.AntiForgeryToken()
-
-                <input type="hidden"
-                       name="progressId"
-                       value="@progressId" />
-
-                <input type="hidden"
-                       name="stepId"
-                       value="@step.Id" />
-
-                <button type="submit">
-                    @(isCompleted ? "Снять отметку" : "Выполнено")
-                </button>
-            </form>
         </li>
     }
-</ol>
+</ul>
 
-<a asp-controller="Instructions"
-   asp-action="Details"
-   asp-route-id="@Model.Id">
-    Вернуться к инструкции
-</a>
+@section Scripts {
+    <script src="~/js/player.js"></script>
+}

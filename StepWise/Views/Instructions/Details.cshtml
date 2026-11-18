@@ -19,5 +19,24 @@
         </li>
     }
 </ol>
+<div class="rating-block">
+    <p>
+        Полезность:
+        @(Model.RatingsCount == 0
+            ? "пока нет оценок"
+            : $"{Model.AverageRating:0.0} из 5 ({Model.RatingsCount})")
+    </p>
+
+    <form asp-action="Rate" asp-route-id="@Model.Id" method="post" class="rating-form">
+        <span>Ваша оценка:</span>
+        @for (int v = 1; v <= 5; v++)
+        {
+            <button type="submit" name="value" value="@v"
+                    class="@(Model.MyRating == v ? "active" : "")">
+                @v
+            </button>
+        }
+    </form>
+</div>
 
 <a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn-start">Начать прохождение</a>

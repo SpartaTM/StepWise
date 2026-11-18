@@ -11,4 +11,5 @@ public class Instruction
     public string AuthorId { get; set; } = string.Empty;
 
     public List<Step> Steps { get; set; } = new();
+    public List<Rating> Ratings { get; set; } = new();
 }

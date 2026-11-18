@@ -1,24 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
+using StepWise.Models;
+using StepWise.Services;
 using StepWise.ViewModels;
 
 namespace StepWise.Controllers;
 
 public class InstructionsController : Controller
 {
+    private readonly ICurrentUser _currentUser;
     private readonly AppDbContext _db;
 
     // ASP.NET сам передаёт сюда базу данных
-    public InstructionsController(AppDbContext db)
+    public InstructionsController(AppDbContext db, ICurrentUser currentUser)
     {
         _db = db;
+        _currentUser = currentUser;
     }
 
     // /Instructions  — каталог
     public IActionResult Index(string? category)
     {
         var query = _db.Instructions.AsNoTracking();
+
 
         // Если категория выбрана, оставляем только её
         if (!string.IsNullOrEmpty(category))
@@ -30,7 +35,9 @@ public class InstructionsController : Controller
                 Id = i.Id,
                 Title = i.Title,
                 Category = i.Category,
-                StepsCount = i.Steps.Count
+                StepsCount = i.Steps.Count,
+                RatingsCount = i.Ratings.Count,
+                AverageRating = i.Ratings.Any() ? i.Ratings.Average(r => (double)r.Value) : 0
             })
             .ToList();
 
@@ -55,6 +62,14 @@ public class InstructionsController : Controller
         if (instruction == null)
             return NotFound();
 
+        var ratings = _db.Ratings.Where(r => r.InstructionId == id);
+        var ratingsCount = ratings.Count();
+        var average = ratingsCount == 0 ? 0 : ratings.Average(r => (double)r.Value);
+        var myRating = ratings
+            .Where(r => r.UserId == _currentUser.UserId)
+            .Select(r => (int?)r.Value)
+            .FirstOrDefault();
+
         var model = new InstructionDetailsViewModel
         {
             Id = instruction.Id,
@@ -70,9 +85,37 @@ public class InstructionsController : Controller
                     Title = s.Title,
                     Description = s.Description
                 })
-                .ToList()
+                .ToList(),
+            RatingsCount = ratingsCount,
+            AverageRating = average,
+            MyRating = myRating,
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Rate(int id, int value)
+    {
+        if (value < 1 || value > 5)
+            return BadRequest();
+
+        if (!_db.Instructions.Any(i => i.Id == id))
+            return NotFound();
+
+        var userId = _currentUser.UserId;
+        var rating = _db.Ratings.FirstOrDefault(r => r.InstructionId == id && r.UserId == userId);
+
+        if (rating == null)
+            _db.Ratings.Add(new Rating { InstructionId = id, UserId = userId, Value = value });
+        else
+        {
+            rating.Value = value;
+            rating.CreatedAt = DateTime.UtcNow;
+        }
+
+        _db.SaveChanges();
+        return RedirectToAction(nameof(Details), new { id });
     }
 }
