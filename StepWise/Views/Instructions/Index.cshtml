@@ -1,20 +1,51 @@
-﻿@model List<StepWise.ViewModels.InstructionListItemViewModel>
+﻿
+@model List<StepWise.ViewModels.InstructionListItemViewModel>
 @{
     ViewData["Title"] = "Каталог инструкций";
     var categories = (List<string>)ViewBag.Categories;
     var selected = (string?)ViewBag.SelectedCategory;
     var sort = (string?)ViewBag.Sort;
-
+    var search = (string?)ViewBag.Search;
 }
 
 <h1>Каталог инструкций</h1>
+
+<!-- Поиск -->
+<form asp-action="Index" method="get">
+    <input type="text"
+           name="search"
+           value="@search"
+           placeholder="Поиск по названию или описанию..." />
+
+    <input type="hidden" name="category" value="@selected" />
+    <input type="hidden" name="sort" value="@sort" />
+
+    <button type="submit">Найти</button>
+    <a asp-action="Index">Сбросить</a>
+</form>
+
+<!-- Фильтр категорий -->
 <div class="category-filter">
-    <a asp-action="Index" class="@(string.IsNullOrEmpty(selected) ? "active" : "")">Все</a>
+    <a asp-action="Index"
+       asp-route-search="@search"
+       asp-route-sort="@sort"
+       class="@(string.IsNullOrEmpty(selected) ? "active" : "")">
+        Все
+    </a>
+
     @foreach (var c in categories)
     {
-        <a asp-action="Index" asp-route-category="@c" asp-route-sort="@sort" class="@(c == selected ? "active" : "")">@c</a>
+        <a asp-action="Index"
+           asp-route-category="@c"
+           asp-route-sort="@sort"
+           asp-route-search="@search"
+           class="@(c == selected ? "active" : "")">
+            @c
+        </a>
     }
 </div>
+
+<!-- Карточки инструкций -->
 <div class="instruction-grid">
     @foreach (var item in Model)
     {
@@ -22,17 +53,43 @@
             <h3>@item.Title</h3>
             <p class="category">@item.Category</p>
             <p>Шагов: @item.StepsCount</p>
+
             @if (item.RatingsCount > 0)
             {
-                <p class="rating">★ @item.AverageRating.ToString("0.0") (@item.RatingsCount)</p>
+                <p class="rating">
+                    ★ @item.AverageRating.ToString("0.0") (@item.RatingsCount)
+                </p>
             }
-            <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
+
+            <a asp-controller="Instructions"
+               asp-action="Details"
+               asp-route-id="@item.Id">
+                Открыть
+            </a>
         </div>
     }
 </div>
+
+<!-- Сортировка -->
 <div class="sort-links">
-    <a asp-action="Index" asp-route-category="@selected"
-       class="@(sort != "rating" ? "active" : "")">По умолчанию</a>
-    <a asp-action="Index" asp-route-category="@selected" asp-route-sort="rating"
-       class="@(sort == "rating" ? "active" : "")">Сначала популярные</a>
+    <a asp-action="Index"
+       asp-route-category="@selected"
+       asp-route-search="@search"
+       class="@(sort != "rating" ? "active" : "")">
+        По умолчанию
+    </a>
+
+    <a asp-action="Index"
+       asp-route-category="@selected"
+       asp-route-search="@search"
+       asp-route-sort="rating"
+       class="@(sort == "rating" ? "active" : "")">
+        Сначала популярные
+    </a>
 </div>
+
+@if (!Model.Any())
+{
+    <p>По вашему запросу ничего не найдено.</p>
+}
+    

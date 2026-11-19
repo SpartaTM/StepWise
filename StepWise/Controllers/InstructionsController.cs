@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
 using StepWise.Models;
@@ -19,11 +20,18 @@ public class InstructionsController : Controller
         _currentUser = currentUser;
     }
 
-    // /Instructions  — каталог
-    public IActionResult Index(string? category, string? sort)
+    // /Instructions — каталог
+    public IActionResult Index(string? category, string? sort, string? search)
     {
         var query = _db.Instructions.AsNoTracking();
 
+        // Поиск по названию и описанию
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(i =>
+                i.Title.Contains(search) ||
+                i.Description.Contains(search));
+        }
 
         // Если категория выбрана, оставляем только её
         if (!string.IsNullOrEmpty(category))
@@ -37,9 +45,13 @@ public class InstructionsController : Controller
                 Category = i.Category,
                 StepsCount = i.Steps.Count,
                 RatingsCount = i.Ratings.Count,
-                AverageRating = i.Ratings.Any() ? i.Ratings.Average(r => (double)r.Value) : 0
+                AverageRating = i.Ratings.Any()
+                    ? i.Ratings.Average(r => (double)r.Value)
+                    : 0
             })
             .ToList();
+
+        // Сортировка по рейтингу
         if (sort == "rating")
         {
             items = items
@@ -54,12 +66,15 @@ public class InstructionsController : Controller
             .Distinct()
             .OrderBy(c => c)
             .ToList();
+
         ViewBag.SelectedCategory = category;
+        ViewBag.Search = search;
+        ViewBag.Sort = sort;
 
         return View(items);
     }
 
-    // /Instructions/Details/5  — одна инструкция
+    // /Instructions/Details/5 — одна инструкция
     public IActionResult Details(int id)
     {
         var instruction = _db.Instructions
@@ -71,7 +86,10 @@ public class InstructionsController : Controller
 
         var ratings = _db.Ratings.Where(r => r.InstructionId == id);
         var ratingsCount = ratings.Count();
-        var average = ratingsCount == 0 ? 0 : ratings.Average(r => (double)r.Value);
+        var average = ratingsCount == 0
+            ? 0
+            : ratings.Average(r => (double)r.Value);
+
         var myRating = ratings
             .Where(r => r.UserId == _currentUser.UserId)
             .Select(r => (int?)r.Value)
@@ -112,10 +130,21 @@ public class InstructionsController : Controller
             return NotFound();
 
         var userId = _currentUser.UserId;
-        var rating = _db.Ratings.FirstOrDefault(r => r.InstructionId == id && r.UserId == userId);
+
+        var rating = _db.Ratings
+            .FirstOrDefault(r =>
+                r.InstructionId == id &&
+                r.UserId == userId);
 
         if (rating == null)
-            _db.Ratings.Add(new Rating { InstructionId = id, UserId = userId, Value = value });
+        {
+            _db.Ratings.Add(new Rating
+            {
+                InstructionId = id,
+                UserId = userId,
+                Value = value
+            });
+        }
         else
         {
             rating.Value = value;
@@ -123,6 +152,7 @@ public class InstructionsController : Controller
         }
 
         _db.SaveChanges();
+
         return RedirectToAction(nameof(Details), new { id });
     }
 }
