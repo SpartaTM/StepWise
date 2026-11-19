@@ -1,0 +1,34 @@
+﻿@model StepWise.ViewModels.PlayerViewModel
+@{
+    ViewData["Title"] = "Прохождение: " + Model.Title;
+}
+@Html.AntiForgeryToken()
+
+<a asp-controller="Instructions" asp-action="Details" asp-route-id="@Model.InstructionId">← К описанию</a>
+<h1>@Model.Title</h1>
+
+<div class="progress-wrap">
+    <div class="progress-bar" style="width: @Model.Percent%"></div>
+</div>
+<p class="progress-text">@Model.DoneCount из @Model.TotalCount (@Model.Percent%)</p>
+<p class="completed-message" hidden="@(!Model.IsCompleted)">Инструкция пройдена!</p>
+
+<ul class="player-steps"
+    data-instruction-id="@Model.InstructionId"
+    data-toggle-url="@Url.Action("ToggleStep", "Player")">
+    @foreach (var step in Model.Steps)
+    {
+        <li class="player-step @(step.IsDone ? "done" : "")" data-step-id="@step.Id">
+            <label>
+                <input type="checkbox" checked="@step.IsDone" />
+                <span class="step-number">@step.Order.</span>
+                <strong>@step.Title</strong>
+            </label>
+            <p>@step.Description</p>
+        </li>
+    }
+</ul>
+
+@section Scripts {
+    <script src="~/js/player.js"></script>
+}

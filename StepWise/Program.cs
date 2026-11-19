@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
+using StepWise.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -22,6 +25,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseStatusCodePagesWithReExecute("/Home/HttpStatus", "?code={0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
