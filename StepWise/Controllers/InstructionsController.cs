@@ -20,7 +20,7 @@ public class InstructionsController : Controller
     }
 
     // /Instructions  — каталог
-    public IActionResult Index(string? category)
+    public IActionResult Index(string? category, string? sort)
     {
         var query = _db.Instructions.AsNoTracking();
 
@@ -40,6 +40,13 @@ public class InstructionsController : Controller
                 AverageRating = i.Ratings.Any() ? i.Ratings.Average(r => (double)r.Value) : 0
             })
             .ToList();
+        if (sort == "rating")
+        {
+            items = items
+                .OrderByDescending(i => i.AverageRating)
+                .ThenByDescending(i => i.RatingsCount)
+                .ToList();
+        }
 
         // Список всех категорий для кнопок фильтра
         ViewBag.Categories = _db.Instructions
