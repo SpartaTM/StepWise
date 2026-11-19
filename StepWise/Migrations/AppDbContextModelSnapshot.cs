@@ -97,6 +97,33 @@ namespace StepWise.Migrations
                     b.ToTable("ProgressSteps");
                 });
 
+            modelBuilder.Entity("StepWise.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InstructionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstructionId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("StepWise.Models.Step", b =>
                 {
                     b.Property<int>("Id")
@@ -154,6 +181,17 @@ namespace StepWise.Migrations
                     b.Navigation("Step");
                 });
 
+            modelBuilder.Entity("StepWise.Models.Rating", b =>
+                {
+                    b.HasOne("StepWise.Models.Instruction", "Instruction")
+                        .WithMany("Ratings")
+                        .HasForeignKey("InstructionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Instruction");
+                });
+
             modelBuilder.Entity("StepWise.Models.Step", b =>
                 {
                     b.HasOne("StepWise.Models.Instruction", "Instruction")
@@ -167,6 +205,8 @@ namespace StepWise.Migrations
 
             modelBuilder.Entity("StepWise.Models.Instruction", b =>
                 {
+                    b.Navigation("Ratings");
+
                     b.Navigation("Steps");
                 });
 

@@ -7,6 +7,8 @@ public class InstructionListItemViewModel
     public string Title { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public int StepsCount { get; set; }
+    public double AverageRating { get; set; }
+    public int RatingsCount { get; set; }
 }
 
 // Один шаг на странице инструкции
@@ -26,4 +28,7 @@ public class InstructionDetailsViewModel
     public string Description { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public List<StepViewModel> Steps { get; set; } = new();
+    public double AverageRating { get; set; }
+    public int RatingsCount { get; set; }
+    public int? MyRating { get; set; }
 }

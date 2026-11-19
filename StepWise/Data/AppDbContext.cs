@@ -10,6 +10,14 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Rating>()
+            .HasIndex(r => new { r.InstructionId, r.UserId })
+            .IsUnique();
+    }
 
     public DbSet<Instruction> Instructions { get; set; }
 
@@ -18,4 +26,5 @@ public class AppDbContext : DbContext
     public DbSet<Progress> Progresses { get; set; }
 
     public DbSet<ProgressStep> ProgressSteps { get; set; }
+    public DbSet<Rating> Ratings { get; set; }
 }

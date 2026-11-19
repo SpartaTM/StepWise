@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/ViewModels/">
-    <File Path="InstructionViewModels.cs" />
-  </Folder>
   <Folder Name="/Элементы решения/">
     <File Path="README.md" />
   </Folder>
