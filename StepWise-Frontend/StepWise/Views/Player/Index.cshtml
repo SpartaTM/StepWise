@@ -1,0 +1,119 @@
+@model StepWise.Models.Instruction
+@{
+    ViewData["Title"] = $"Прохождение: {Model.Title}";
+    var completedStepIds = (List<int>)ViewBag.CompletedStepIds;
+    int progressPercent = (int)ViewBag.ProgressPercent;
+    int progressId = (int)ViewBag.ProgressId;
+    var orderedSteps = Model.Steps.OrderBy(s => s.Order).ToList();
+    int totalSteps = orderedSteps.Count;
+    int completedCount = completedStepIds.Count;
+    bool allDone = totalSteps > 0 && completedCount == totalSteps;
+    int? firstUncompletedId = orderedSteps.FirstOrDefault(s => !completedStepIds.Contains(s.Id))?.Id;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <a asp-controller="Instructions" asp-action="Details" asp-route-id="@Model.Id" class="sw-back-link">
+        <i class="bi bi-arrow-left me-1"></i>К описанию инструкции
+    </a>
+    <span class="sw-category-badge">@Model.Category</span>
+</div>
+
+<div class="sw-player-header sw-card p-4 mb-4">
+    <div class="row align-items-center g-3">
+        <div class="col-md-8">
+            <h1 class="h3 fw-bold mb-1">@Model.Title</h1>
+            <p class="text-muted mb-0 small">@Model.Description</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex justify-content-between justify-content-md-end align-items-baseline gap-2 mb-1">
+                <span class="text-muted small">Выполнено @completedCount из @totalSteps</span>
+                <span class="h4 fw-bold mb-0 @(allDone ? "text-success" : "text-primary")">@progressPercent%</span>
+            </div>
+            <div class="progress sw-progress" style="height: 10px;">
+                <div class="progress-bar @(allDone ? "bg-success" : "")"
+                     role="progressbar"
+                     style="width: @progressPercent%"
+                     aria-valuenow="@progressPercent"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (allDone)
+{
+    <div class="sw-complete-banner mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="sw-complete-icon">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1">Отличная работа! Инструкция завершена</h4>
+                    <p class="mb-0 text-muted small">Все шаги успешно выполнены. Вы можете вернуться в каталог и выбрать следующую задачу.</p>
+                </div>
+            </div>
+            <a asp-controller="Instructions" asp-action="Index" class="btn sw-btn-success px-4">
+                <i class="bi bi-grid me-2"></i>В каталог
+            </a>
+        </div>
+    </div>
+}
+
+<div class="d-flex flex-column gap-3">
+    @foreach (var step in orderedSteps)
+    {
+        bool isCompleted = completedStepIds.Contains(step.Id);
+        bool isCurrent = !isCompleted && firstUncompletedId == step.Id;
+
+        <div class="sw-step-card @(isCompleted ? "is-completed" : "") @(isCurrent ? "is-current" : "")">
+            <div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+                <div class="sw-step-num">
+                    @if (isCompleted)
+                    {
+                        <i class="bi bi-check-lg"></i>
+                    }
+                    else
+                    {
+                        <span>@step.Order</span>
+                    }
+                </div>
+
+                <div class="flex-grow-1">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <h3 class="h5 fw-bold mb-0 sw-step-title">@step.Title</h3>
+                        @if (isCurrent)
+                        {
+                            <span class="badge bg-primary-subtle text-primary rounded-pill">Текущий шаг</span>
+                        }
+                        else if (isCompleted)
+                        {
+                            <span class="badge bg-success-subtle text-success rounded-pill">Готово</span>
+                        }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(step.Description))
+                    {
+                        <p class="text-muted mb-0 sw-step-desc">@step.Description</p>
+                    }
+                </div>
+
+                <form asp-controller="Player" asp-action="ToggleStep" method="post" class="ms-sm-auto align-self-stretch align-self-sm-center">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="progressId" value="@progressId" />
+                    <input type="hidden" name="stepId" value="@step.Id" />
+                    <button type="submit" class="btn w-100 @(isCompleted ? "sw-btn-step-done" : "sw-btn-primary")">
+                        @if (isCompleted)
+                        {
+                            <i class="bi bi-check-circle-fill me-1"></i><span>Выполнено</span>
+                        }
+                        else
+                        {
+                            <i class="bi bi-circle me-1"></i><span>Отметить шаг</span>
+                        }
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

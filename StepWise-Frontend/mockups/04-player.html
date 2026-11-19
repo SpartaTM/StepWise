@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Прохождение: Установка Git — StepWise (Макет)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header class="sticky-top sw-navbar">
+        <nav class="navbar navbar-expand-md">
+            <div class="container">
+                <a class="navbar-brand sw-brand" href="01-home.html">
+                    <span class="sw-brand-icon"><i class="bi bi-check2-square"></i></span>
+                    <span>StepWise</span>
+                </a>
+                <button class="navbar-toggler sw-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0 gap-1 ms-md-4">
+                        <li class="nav-item">
+                            <a class="nav-link sw-nav-link " href="01-home.html">
+                                <i class="bi bi-house-door me-1"></i>Главная
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sw-nav-link active" href="02-catalog.html">
+                                <i class="bi bi-compass me-1"></i>Каталог
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sw-nav-link " href="05-author-dashboard.html">
+                                <i class="bi bi-folder2-open me-1"></i>Мои инструкции
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="06-author-form.html" class="btn sw-btn-primary btn-sm px-3 py-2">
+                            <i class="bi bi-plus-lg me-1"></i>Создать гайд
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="flex-grow-1 py-4 py-md-5">
+        <div class="container">
+            
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <a href="03-details.html" class="sw-back-link">
+        <i class="bi bi-arrow-left me-1"></i>К описанию инструкции
+    </a>
+    <span class="sw-category-badge">Разработка</span>
+</div>
+
+<div class="sw-player-header sw-card p-4 mb-4">
+    <div class="row align-items-center g-3">
+        <div class="col-md-8">
+            <h1 class="h3 fw-bold mb-1">Установка Git и первый коммит</h1>
+            <p class="text-muted mb-0 small">Пошаговое руководство по установке системы контроля версий Git и настройке профиля.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex justify-content-between justify-content-md-end align-items-baseline gap-2 mb-1">
+                <span class="text-muted small" id="mockupCount">Выполнено 2 из 4</span>
+                <span class="h4 fw-bold mb-0 text-primary" id="mockupPct">50%</span>
+            </div>
+            <div class="progress sw-progress" style="height: 10px;">
+                <div class="progress-bar" id="mockupBar" role="progressbar" style="width: 50%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sw-complete-banner mb-4 d-none" id="mockupCompleteBanner">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="sw-complete-icon"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+                <h4 class="fw-bold mb-1">Отличная работа! Инструкция завершена</h4>
+                <p class="mb-0 text-muted small">Все шаги успешно выполнены. Вы можете вернуться в каталог и выбрать следующую задачу.</p>
+            </div>
+        </div>
+        <a href="02-catalog.html" class="btn sw-btn-success px-4"><i class="bi bi-grid me-2"></i>В каталог</a>
+    </div>
+</div>
+
+<div class="d-flex flex-column gap-3">
+    <div class="sw-step-card is-completed" data-order="1">
+        <div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+            <div class="sw-step-num"><i class="bi bi-check-lg"></i></div>
+            <div class="flex-grow-1">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h3 class="h5 fw-bold mb-0 sw-step-title">Скачать установщик с git-scm.com</h3>
+                    <span class="badge bg-success-subtle text-success rounded-pill step-status-badge">Готово</span>
+                </div>
+                <p class="text-muted mb-0 sw-step-desc">Перейдите на официальный сайт Git и выберите версию под вашу ОС.</p>
+            </div>
+            <div class="ms-sm-auto align-self-stretch align-self-sm-center">
+                <button type="button" class="btn w-100 sw-btn-step-done mockup-toggle-step">
+                    <i class="bi bi-check-circle-fill me-1"></i><span>Выполнено</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sw-step-card is-completed" data-order="2">
+        <div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+            <div class="sw-step-num"><i class="bi bi-check-lg"></i></div>
+            <div class="flex-grow-1">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h3 class="h5 fw-bold mb-0 sw-step-title">Запустить мастер установки</h3>
+                    <span class="badge bg-success-subtle text-success rounded-pill step-status-badge">Готово</span>
+                </div>
+                <p class="text-muted mb-0 sw-step-desc">Пройдите шаги мастера с рекомендованными параметрами по умолчанию.</p>
+            </div>
+            <div class="ms-sm-auto align-self-stretch align-self-sm-center">
+                <button type="button" class="btn w-100 sw-btn-step-done mockup-toggle-step">
+                    <i class="bi bi-check-circle-fill me-1"></i><span>Выполнено</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sw-step-card is-current" data-order="3">
+        <div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+            <div class="sw-step-num"><span>3</span></div>
+            <div class="flex-grow-1">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h3 class="h5 fw-bold mb-0 sw-step-title">Проверить версию в терминале</h3>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill step-status-badge">Текущий шаг</span>
+                </div>
+                <p class="text-muted mb-0 sw-step-desc">Откройте терминал и выполните команду git --version.</p>
+            </div>
+            <div class="ms-sm-auto align-self-stretch align-self-sm-center">
+                <button type="button" class="btn w-100 sw-btn-primary mockup-toggle-step">
+                    <i class="bi bi-circle me-1"></i><span>Отметить шаг</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sw-step-card" data-order="4">
+        <div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+            <div class="sw-step-num"><span>4</span></div>
+            <div class="flex-grow-1">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h3 class="h5 fw-bold mb-0 sw-step-title">Настроить имя пользователя и email</h3>
+                    <span class="badge bg-light text-muted rounded-pill step-status-badge">Ожидает</span>
+                </div>
+                <p class="text-muted mb-0 sw-step-desc">Укажите git config --global user.name и user.email для подписи коммитов.</p>
+            </div>
+            <div class="ms-sm-auto align-self-stretch align-self-sm-center">
+                <button type="button" class="btn w-100 sw-btn-primary mockup-toggle-step">
+                    <i class="bi bi-circle me-1"></i><span>Отметить шаг</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </main>
+
+    <footer class="sw-footer py-4 mt-auto">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 text-muted small">
+                <span class="fw-semibold text-dark">StepWise</span>
+                <span>•</span>
+                <span>От инструкции к результату © 2026</span>
+            </div>
+            <div class="d-flex gap-3 small">
+                <a href="02-catalog.html" class="sw-footer-link">Каталог</a>
+                <a href="05-author-dashboard.html" class="sw-footer-link">Кабинет автора</a>
+                <a href="07-about.html" class="sw-footer-link">О проекте</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html>

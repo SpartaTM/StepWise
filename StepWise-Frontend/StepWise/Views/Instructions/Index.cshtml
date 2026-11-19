@@ -1,0 +1,83 @@
+@model List<StepWise.ViewModels.InstructionListItemViewModel>
+@{
+    ViewData["Title"] = "Каталог инструкций";
+    var categories = (List<string>)ViewBag.Categories;
+    var selected = (string?)ViewBag.SelectedCategory;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+    <div>
+        <h1 class="sw-page-title mb-1">Каталог инструкций</h1>
+        <p class="text-muted mb-0">Выберите задачу и проходите её в удобном интерактивном формате</p>
+    </div>
+    <div class="sw-search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" id="catalogSearch" class="form-control" placeholder="Поиск по названию или категории..." autocomplete="off" />
+        <button type="button" id="clearSearchBtn" class="sw-search-clear d-none" title="Очистить">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+</div>
+
+<div class="sw-filter-bar mb-4">
+    <a asp-action="Index" class="sw-chip @(string.IsNullOrEmpty(selected) ? "active" : "")">
+        <i class="bi bi-grid-fill me-1"></i>Все <span class="ms-1 opacity-75">(@Model.Count)</span>
+    </a>
+    @foreach (var c in categories)
+    {
+        <a asp-action="Index" asp-route-category="@c" class="sw-chip @(c == selected ? "active" : "")">
+            @c
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="sw-empty-state text-center py-5">
+        <div class="sw-empty-icon mx-auto mb-3"><i class="bi bi-journal-x"></i></div>
+        <h4 class="fw-bold">Инструкций пока нет</h4>
+        <p class="text-muted mb-4">В этой категории ещё нет опубликованных гайдов. Станьте первым автором!</p>
+        <a asp-controller="Author" asp-action="Create" class="btn sw-btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Создать инструкцию
+        </a>
+    </div>
+}
+else
+{
+    <div class="row g-4" id="catalogGrid">
+        @foreach (var item in Model)
+        {
+            var estMinutes = Math.Max(2, item.StepsCount * 2);
+            <div class="col-12 col-md-6 col-lg-4 catalog-item" data-title="@item.Title.ToLowerInvariant()" data-category="@item.Category.ToLowerInvariant()">
+                <article class="sw-card sw-instruction-card h-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <span class="sw-category-badge">@item.Category</span>
+                        <span class="text-muted small" title="Примерное время прохождения">
+                            <i class="bi bi-clock me-1"></i>~@estMinutes мин
+                        </span>
+                    </div>
+                    <h3 class="sw-card-title mb-3">
+                        <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id" class="stretched-link text-decoration-none text-dark">
+                            @item.Title
+                        </a>
+                    </h3>
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                        <span class="sw-steps-pill">
+                            <i class="bi bi-list-ol me-1 text-primary"></i>
+                            @item.StepsCount @(item.StepsCount == 1 ? "шаг" : (item.StepsCount >= 2 && item.StepsCount <= 4 ? "шага" : "шагов"))
+                        </span>
+                        <span class="sw-card-action">
+                            Открыть <i class="bi bi-arrow-right ms-1"></i>
+                        </span>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+
+    <div id="noSearchResults" class="sw-empty-state text-center py-5 d-none">
+        <div class="sw-empty-icon mx-auto mb-3"><i class="bi bi-search"></i></div>
+        <h5 class="fw-bold">Ничего не найдено</h5>
+        <p class="text-muted mb-0">Попробуйте изменить поисковый запрос или сбросить фильтр</p>
+    </div>
+}

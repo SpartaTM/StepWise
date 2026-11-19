@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = "Интерактивные пошаговые инструкции";
+}
+
+<section class="sw-hero mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="sw-badge-pill mb-3">
+                <i class="bi bi-stars text-primary me-1"></i> Платформа интерактивных чек-листов
+            </div>
+            <h1 class="sw-hero-title mb-3">
+                Любая сложная задача — <span class="sw-text-gradient">шаг за шагом</span>
+            </h1>
+            <p class="sw-hero-subtitle mb-4">
+                Забудьте о разрозненных форумах и забытых пунктах. Проходите проверенные инструкции с интерактивным трекингом прогресса или создавайте собственные гайды за пару минут.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-controller="Instructions" asp-action="Index" class="btn sw-btn-primary btn-lg px-4">
+                    <i class="bi bi-compass me-2"></i>Открыть каталог
+                </a>
+                <a asp-controller="Author" asp-action="Create" class="btn sw-btn-outline btn-lg px-4">
+                    <i class="bi bi-pencil-square me-2"></i>Создать инструкцию
+                </a>
+            </div>
+            <div class="d-flex flex-wrap gap-4 mt-4 pt-2 text-muted small">
+                <div><i class="bi bi-check-circle-fill text-success me-1"></i>Сохранение прогресса</div>
+                <div><i class="bi bi-check-circle-fill text-success me-1"></i>Удобный конструктор</div>
+                <div><i class="bi bi-check-circle-fill text-success me-1"></i>Адаптивно для смартфонов</div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="sw-hero-preview">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">Пример прохождения</span>
+                    <span class="fw-bold text-primary">75%</span>
+                </div>
+                <h5 class="fw-bold mb-2">Установка Git и первый коммит</h5>
+                <div class="progress sw-progress mb-4" style="height: 8px;">
+                    <div class="progress-bar" role="progressbar" style="width: 75%"></div>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <div class="sw-preview-step done">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span>1. Скачать установщик с git-scm.com</span>
+                    </div>
+                    <div class="sw-preview-step done">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span>2. Запустить мастер установки</span>
+                    </div>
+                    <div class="sw-preview-step done">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span>3. Проверить версию в терминале</span>
+                    </div>
+                    <div class="sw-preview-step active">
+                        <i class="bi bi-circle text-primary"></i>
+                        <span>4. Настроить имя пользователя и email</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-4">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="sw-feature-card h-100">
+                <div class="sw-feature-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <h5 class="fw-bold mt-3">Чёткая структура</h5>
+                <p class="text-muted mb-0">
+                    Каждая задача разбита на атомарные шаги. Никакой воды — только конкретные действия в правильном порядке.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sw-feature-card h-100">
+                <div class="sw-feature-icon bg-success-subtle text-success">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h5 class="fw-bold mt-3">Интерактивный плеер</h5>
+                <p class="text-muted mb-0">
+                    Отмечайте выполненные пункты в реальном времени, следите за шкалой прогресса и возвращайтесь в любой момент.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sw-feature-card h-100">
+                <div class="sw-feature-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-magic"></i>
+                </div>
+                <h5 class="fw-bold mt-3">Кабинет автора</h5>
+                <p class="text-muted mb-0">
+                    Создавайте, редактируйте и обновляйте свои чек-листы. Делитесь опытом с командой, одногруппниками или сообществом.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
