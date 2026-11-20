@@ -1,65 +1,121 @@
-﻿@model StepWise.ViewModels.InstructionDetailsViewModel
+@model StepWise.ViewModels.InstructionDetailsViewModel
 @{
     ViewData["Title"] = Model.Title;
 }
 
-<a asp-controller="Instructions" asp-action="Index">← Назад в каталог</a>
+<a class="back-link" asp-controller="Instructions" asp-action="Index">← Назад в каталог</a>
 
-<h1>@Model.Title</h1>
-<p class="category">@Model.Category</p>
-<p>@Model.Description</p>
-@if (Model.ForkedFromTitle != null)
-{
-    <p class="forked-from">
-        Улучшенная версия инструкции
-        <a asp-action="Details" asp-route-id="@Model.ForkedFromId">«@Model.ForkedFromTitle»</a>
-    </p>
-}
+<div class="details">
+    <div class="details-main">
+        <header class="card details-head">
+            <div class="chips">
+                <partial name="_CategoryChip" model="Model.Category" />
+                @if (Model.IsMine)
+                {
+                    <span class="chip tone-1">Ваша инструкция</span>
+                }
+            </div>
 
-@if (Model.ForksCount > 0)
-{
-    <p class="forks-count">Улучшенных версий: @Model.ForksCount</p>
-}
+            <h1>@Model.Title</h1>
+            <p class="lead">@Model.Description</p>
 
-@if (Model.IsMine)
-{
-    <a asp-controller="Author" asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">Редактировать</a>
-}
-else
-{
-    <form asp-action="Fork" asp-route-id="@Model.Id" method="post" class="fork-form">
-        <button type="submit" class="btn-fork">Улучшить: создать свою копию</button>
-    </form>
-}
+            <div class="details-meta">
+                <span>📋 Шагов: @Model.Steps.Count</span>
+                @if (Model.RatingsCount > 0)
+                {
+                    <span><span style="color:var(--amber)">★</span> @Model.AverageRating.ToString("0.0") (@Model.RatingsCount)</span>
+                }
+                @if (Model.ForksCount > 0)
+                {
+                    <span class="forks-count">🔀 Улучшенных версий: @Model.ForksCount</span>
+                }
+            </div>
 
-<h2>Шаги (@Model.Steps.Count)</h2>
-<ol class="steps-list">
-    @foreach (var step in Model.Steps)
-    {
-        <li>
-            <strong>@step.Title</strong>
-            <p>@step.Description</p>
-        </li>
-    }
-</ol>
-<div class="rating-block">
-    <p>
-        Полезность:
-        @(Model.RatingsCount == 0
-            ? "пока нет оценок"
-            : $"{Model.AverageRating:0.0} из 5 ({Model.RatingsCount})")
-    </p>
+            <a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn btn-primary btn-lg mobile-cta no-print">Начать прохождение</a>
 
-    <form asp-action="Rate" asp-route-id="@Model.Id" method="post" class="rating-form">
-        <span>Ваша оценка:</span>
-        @for (int v = 1; v <= 5; v++)
-        {
-            <button type="submit" name="value" value="@v"
-                    class="@(Model.MyRating == v ? "active" : "")">
-                @v
-            </button>
-        }
-    </form>
+            @if (Model.ForkedFromTitle != null)
+            {
+                <p class="notice forked-from">
+                    <span aria-hidden="true">🔀</span>
+                    <span>
+                        Улучшенная версия инструкции
+                        <a asp-action="Details" asp-route-id="@Model.ForkedFromId">«@Model.ForkedFromTitle»</a>
+                    </span>
+                </p>
+            }
+        </header>
+
+        <section class="card">
+            <h2>Шаги (@Model.Steps.Count)</h2>
+            <ol class="steps-list">
+                @foreach (var step in Model.Steps)
+                {
+                    <li>
+                        <span class="step-num">@step.Order</span>
+                        <div class="step-body">
+                            <strong>@step.Title</strong>
+                            @if (!string.IsNullOrWhiteSpace(step.Description))
+                            {
+                                <p>@step.Description</p>
+                            }
+                        </div>
+                    </li>
+                }
+            </ol>
+        </section>
+    </div>
+
+    <aside class="details-aside">
+        <div class="card aside-card">
+            <h3>Готовы начать?</h3>
+            <div class="aside-actions">
+                <a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn btn-primary btn-lg btn-block btn-start">Начать прохождение</a>
+
+                @if (Model.IsMine)
+                {
+                    <a asp-controller="Author" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-block btn-edit">Редактировать</a>
+                }
+                else
+                {
+                    <form asp-action="Fork" asp-route-id="@Model.Id" method="post" class="fork-form">
+                        <button type="submit" class="btn btn-block btn-fork">Улучшить: создать свою копию</button>
+                    </form>
+                }
+
+                <button type="button" class="btn btn-ghost btn-block no-print" onclick="window.print()">🖨️ Печать / сохранить в PDF</button>
+            </div>
+            @if (!Model.IsMine)
+            {
+                <p class="aside-hint">Копию можно доработать под себя — оригинал останется без изменений.</p>
+            }
+        </div>
+
+        <div class="card aside-card rating-block">
+            <h3>Полезность</h3>
+            <div class="rating-score">
+                @if (Model.RatingsCount == 0)
+                {
+                    <span>Пока нет оценок. Станьте первым!</span>
+                }
+                else
+                {
+                    <b>@Model.AverageRating.ToString("0.0")</b>
+                    <span>из 5 · оценок: @Model.RatingsCount</span>
+                }
+            </div>
+
+            <form asp-action="Rate" asp-route-id="@Model.Id" method="post" class="rating-form">
+                <span>@(Model.MyRating.HasValue ? "Ваша оценка" : "Оцените инструкцию")</span>
+                <div class="stars" role="group" aria-label="Оценка от 1 до 5">
+                    @for (int v = 5; v >= 1; v--)
+                    {
+                        <button type="submit" name="value" value="@v"
+                                aria-label="Оценить на @v"
+                                title="@v из 5"
+                                class="@(Model.MyRating.HasValue && v <= Model.MyRating.Value ? "on" : "")">★</button>
+                    }
+                </div>
+            </form>
+        </div>
+    </aside>
 </div>
-
-<a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn-start">Начать прохождение</a>

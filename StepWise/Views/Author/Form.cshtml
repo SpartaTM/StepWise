@@ -1,57 +1,151 @@
-﻿@model StepWise.ViewModels.InstructionFormViewModel
+@model StepWise.ViewModels.InstructionFormViewModel
 @{
     var isEdit = Model.Id.HasValue;
     ViewData["Title"] = isEdit ? "Редактирование инструкции" : "Новая инструкция";
 }
 
-<h1>@ViewData["Title"]</h1>
+<a class="back-link" asp-action="Index">← К моим инструкциям</a>
 
+<div class="page-head">
+    <span class="eyebrow">Кабинет автора</span>
+    <h1>@ViewData["Title"]</h1>
+    <p>Опишите задачу и разбейте её на понятные шаги.</p>
+</div>
 
-
-
-<form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post">
+<form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post" id="instruction-form">
     <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="error"></div>
 
-    <div class="form-group">
-        <label asp-for="Title">Название</label>
-        <input asp-for="Title" />
-        <span asp-validation-for="Title" class="error"></span>
-    </div>
+    <div class="form-layout">
+        <div class="form-main">
+            <div asp-validation-summary="ModelOnly" class="alert-error"></div>
 
-    <div class="form-group">
-        <label asp-for="Description">Описание</label>
-        <textarea asp-for="Description" rows="3"></textarea>
-        <span asp-validation-for="Description" class="error"></span>
-    </div>
+            <section class="card">
+                <div class="form-section-title"><h2>Основное</h2></div>
 
-    <div class="form-group">
-        <label asp-for="Category">Категория</label>
-        <input asp-for="Category" list="category-list" />
-        <datalist id="category-list">
-            @foreach(var c in (List<string>)ViewBag.Categories)
-                {
-                    <option value="@c"></option>
-                }
-        </datalist>
-        <span asp-validation-for="Category" class="error"></span>
-    </div>
+                <div class="field">
+                    <label asp-for="Title">Название</label>
+                    <input asp-for="Title" placeholder="Например: Как установить Docker" maxlength="100" />
+                    <span asp-validation-for="Title" class="field-error"></span>
+                </div>
 
-    <h2>Шаги</h2>
-    <p>Заполните нужные шаги, пустые будут пропущены.</p>
+                <div class="field">
+                    <label asp-for="Description">Описание</label>
+                    <textarea asp-for="Description" rows="3" placeholder="О чём эта инструкция и кому она пригодится"></textarea>
+                    <span asp-validation-for="Description" class="field-error"></span>
+                </div>
 
-    @for (int i = 0; i < Model.Steps.Count; i++)
-    {
-        <div class="step-form-item">
-            <input type="hidden" asp-for="Steps[i].Id" />
-            <h4>Шаг @(i + 1)</h4>
-            <input asp-for="Steps[i].Title" placeholder="Название шага" />
-            <textarea asp-for="Steps[i].Description" rows="2" placeholder="Описание шага"></textarea>
-            <span asp-validation-for="Steps[i].Title" class="error"></span>
-            <span asp-validation-for="Steps[i].Description" class="error"></span>
+                <div class="field" style="margin-bottom:0">
+                    <label asp-for="Category">Категория</label>
+                    <input asp-for="Category" list="category-list" placeholder="Выберите из списка или введите свою" autocomplete="off" />
+                    <datalist id="category-list">
+                        @foreach (var c in (List<string>)ViewBag.Categories)
+                        {
+                            <option value="@c"></option>
+                        }
+                    </datalist>
+                    <span asp-validation-for="Category" class="field-error"></span>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="form-section-title">
+                    <h2>Шаги</h2>
+                    <span class="tag" id="steps-tag"></span>
+                </div>
+                <p class="form-lead">Заполните нужные шаги, пустые будут пропущены.</p>
+
+                <div id="steps">
+                    @for (int i = 0; i < Model.Steps.Count; i++)
+                    {
+                        <div class="step-form-item">
+                            <input type="hidden" asp-for="Steps[i].Id" />
+                            <h4 data-n="@(i + 1)">Шаг @(i + 1)</h4>
+                            <button type="button" class="step-clear" title="Очистить шаг" hidden>Очистить</button>
+                            <input asp-for="Steps[i].Title" placeholder="Название шага, например «Скачать установщик»" maxlength="100" />
+                            <textarea asp-for="Steps[i].Description" rows="2" placeholder="Описание шага (необязательно)"></textarea>
+                            <span asp-validation-for="Steps[i].Title" class="field-error"></span>
+                            <span asp-validation-for="Steps[i].Description" class="field-error"></span>
+                        </div>
+                    }
+                </div>
+
+                <div class="add-step">
+                    <button type="button" class="btn btn-add" id="add-step">+ Добавить шаг</button>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">@(isEdit ? "Сохранить изменения" : "Создать инструкцию")</button>
+                <a asp-action="Index" class="btn btn-ghost">Отмена</a>
+            </div>
         </div>
-    }
 
-    <button type="submit">@(isEdit ? "Сохранить изменения" : "Создать")</button>
-    <a asp-action="Index">Отмена</a>
+        <aside class="card tips">
+            <h3>💡 Советы автору</h3>
+            <ul>
+                <li>Начинайте шаг с глагола: «Скачать», «Открыть», «Проверить».</li>
+                <li>Один шаг — одно действие. Так проще ничего не пропустить.</li>
+                <li>Добавляйте в описание команды, ссылки и ожидаемый результат.</li>
+                <li>Лучше 5–8 понятных шагов, чем 20 мелких.</li>
+            </ul>
+        </aside>
+    </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Показываем только заполненные шаги и один пустой; остальные раскрываются кнопкой «+ Добавить шаг».
+        (function () {
+            const items = Array.from(document.querySelectorAll('#steps .step-form-item'));
+            const addBtn = document.getElementById('add-step');
+            const tag = document.getElementById('steps-tag');
+            if (!items.length) return;
+
+            const titleOf = (it) => it.querySelector('input:not([type=hidden])');
+            const descOf = (it) => it.querySelector('textarea');
+            const isFilled = (it) =>
+                titleOf(it).value.trim() !== '' || descOf(it).value.trim() !== '' ||
+                it.querySelector('.field-validation-error, .input-validation-error') !== null;
+
+            let lastFilled = -1;
+            items.forEach((it, i) => { if (isFilled(it)) lastFilled = i; });
+            const visibleCount = Math.min(items.length, Math.max(lastFilled + 2, 1));
+            items.forEach((it, i) => it.classList.toggle('is-collapsed', i >= visibleCount));
+
+            const refresh = () => {
+                let n = 0;
+                items.forEach((it) => {
+                    if (it.classList.contains('is-collapsed')) return;
+                    n++;
+                    it.querySelector('h4').dataset.n = n;
+                    it.querySelector('.step-clear').hidden = n === 1 && !isFilled(it);
+                });
+                const filled = items.filter((it) => !it.classList.contains('is-collapsed') && titleOf(it).value.trim() !== '').length;
+                tag.textContent = 'Заполнено: ' + filled + ' из ' + items.length;
+                addBtn.hidden = items.every((it) => !it.classList.contains('is-collapsed'));
+            };
+
+            addBtn.addEventListener('click', () => {
+                const next = items.find((it) => it.classList.contains('is-collapsed'));
+                if (!next) return;
+                next.classList.remove('is-collapsed');
+                titleOf(next).focus({ preventScroll: false });
+                refresh();
+            });
+
+            items.forEach((it) => {
+                it.addEventListener('input', refresh);
+                it.querySelector('.step-clear').addEventListener('click', () => {
+                    titleOf(it).value = '';
+                    descOf(it).value = '';
+                    const visible = items.filter((x) => !x.classList.contains('is-collapsed'));
+                    if (visible.length > 1) it.classList.add('is-collapsed');
+                    refresh();
+                });
+            });
+
+            refresh();
+        })();
+    </script>
+}

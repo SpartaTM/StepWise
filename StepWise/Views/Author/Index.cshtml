@@ -1,43 +1,58 @@
-﻿@model List<StepWise.ViewModels.InstructionListItemViewModel>
+@model List<StepWise.ViewModels.InstructionListItemViewModel>
 @{
     ViewData["Title"] = "Мои инструкции";
 }
 
-<h1>Мои инструкции</h1>
-<a asp-action="Create" class="btn-create">+ Создать инструкцию</a>
+<div class="page-head page-head-row">
+    <div>
+        <span class="eyebrow">Кабинет автора</span>
+        <h1>Мои инструкции</h1>
+        <p>Создавайте, редактируйте и удаляйте свои инструкции.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary btn-create">+ Создать инструкцию</a>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Пока нет ни одной инструкции. Создайте первую.</p>
+    <div class="empty-state">
+        <div class="emoji">✍️</div>
+        <h3>Пока нет ни одной инструкции</h3>
+        <p>Создайте первую: опишите задачу шагами, и другие смогут проходить её с прогресс-баром.</p>
+        <a asp-action="Create" class="btn btn-primary btn-lg">Создать первую инструкцию</a>
+    </div>
 }
 else
 {
-    <table class="author-table">
-        <thead>
-            <tr>
-                <th>Название</th>
-                <th>Категория</th>
-                <th>Шагов</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.Category</td>
-                    <td>@item.StepsCount</td>
-                    <td>
-                        <a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
-                        <form asp-action="Delete" asp-route-id="@item.Id" method="post"
-                              onsubmit="return confirm('Удалить инструкцию?');" style="display:inline">
-                            <button type="submit">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="stats">
+        <div class="stat"><b>@Model.Count</b><span>инструкций</span></div>
+        <div class="stat"><b>@Model.Sum(i => i.StepsCount)</b><span>шагов всего</span></div>
+        <div class="stat"><b>@Model.Select(i => i.Category).Distinct().Count()</b><span>категорий</span></div>
+    </div>
+
+    <ul class="author-list">
+        @foreach (var item in Model)
+        {
+            <li class="author-item">
+                <div class="author-item-main">
+                    <span class="badge-tile tone-@((item.Category ?? "").Sum(ch => (int)ch) % 6)">@(string.IsNullOrEmpty(item.Title) ? "?" : item.Title.Substring(0, 1).ToUpper())</span>
+                    <div>
+                        <h3><a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h3>
+                        <div class="sub">
+                            <partial name="_CategoryChip" model="item.Category" />
+                            <span>Шагов: @item.StepsCount</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="author-item-actions">
+                    <a class="btn btn-sm" asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
+                    <a class="btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                          onsubmit="return confirm('Удалить инструкцию?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
 }
