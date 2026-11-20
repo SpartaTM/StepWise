@@ -1,4 +1,16 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+// Мобильное меню
+(function () {
+    const header = document.getElementById('site-header');
+    const burger = document.getElementById('burger');
+    if (!header || !burger) return;
 
-// Write your JavaScript code.
+    const setOpen = (open) => {
+        header.classList.toggle('nav-open', open);
+        burger.setAttribute('aria-expanded', String(open));
+        burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    };
+
+    burger.addEventListener('click', () => setOpen(!header.classList.contains('nav-open')));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 760) setOpen(false); });
+})();

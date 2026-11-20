@@ -1,0 +1,6 @@
+@* Цветной бейдж категории. Цвет зависит от названия и не меняется между запусками. *@
+@model string
+@{
+    var tone = string.IsNullOrEmpty(Model) ? 0 : Model.Sum(ch => (int)ch) % 6;
+}
+<span class="chip tone-@tone">@Model</span>

@@ -1,8 +1,110 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div>
+        <span class="eyebrow">Платформа интерактивных инструкций</span>
+        <h1>Любая задача — <em>шаг за шагом</em></h1>
+        <p class="lead">
+            Создавайте понятные чек-листы для повторяющихся дел и проходите чужие инструкции
+            без пропущенных шагов. Прогресс сохраняется, а лучшие инструкции поднимаются выше.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" asp-controller="Instructions" asp-action="Index">Открыть каталог</a>
+            <a class="btn btn-lg" asp-controller="Author" asp-action="Create">Создать инструкцию</a>
+        </div>
+        <div class="hero-points">
+            <span>Без регистрации</span>
+            <span>Прогресс сохраняется</span>
+            <span>Работает с телефона</span>
+        </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+        <div class="mock">
+            <div class="mock-head">
+                <strong>Как собрать ПК</strong>
+                <span class="chip tone-1">Техника</span>
+            </div>
+            <div class="progress-wrap"><div class="progress-bar" style="width: 60%"></div></div>
+            <p class="progress-text">3 из 5 · 60%</p>
+            <div class="mock-step done"><i></i><span>Установить процессор</span></div>
+            <div class="mock-step done"><i></i><span>Поставить кулер</span></div>
+            <div class="mock-step done"><i></i><span>Вставить оперативную память</span></div>
+            <div class="mock-step now"><i></i><span>Закрепить материнскую плату</span></div>
+            <div class="mock-step"><i></i><span>Подключить питание</span></div>
+        </div>
+        <div class="float-chip a">★ 4.8 полезность</div>
+        <div class="float-chip b">Шаг 4 из 5</div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <span class="eyebrow">Возможности</span>
+        <h2>Всё, чтобы довести дело до конца</h2>
+        <p>Инструкция перестаёт быть простынёй текста и превращается в понятный маршрут.</p>
+    </div>
+    <div class="features">
+        <article class="card feature">
+            <div class="ico tone-0">✅</div>
+            <h3>Пошаговое прохождение</h3>
+            <p>Отмечайте выполненное и сразу видите, сколько осталось. Ни один шаг не потеряется.</p>
+        </article>
+        <article class="card feature">
+            <div class="ico tone-1">💾</div>
+            <h3>Прогресс сохраняется</h3>
+            <p>Закрыли вкладку посреди инструкции — продолжите ровно с того места, где остановились.</p>
+        </article>
+        <article class="card feature">
+            <div class="ico tone-2">✍️</div>
+            <h3>Кабинет автора</h3>
+            <p>Создавайте и редактируйте свои инструкции или сделайте улучшенную копию чужой.</p>
+        </article>
+        <article class="card feature">
+            <div class="ico tone-4">⭐</div>
+            <h3>Оценки полезности</h3>
+            <p>Читатели оценивают инструкции, а самые полезные поднимаются в начало каталога.</p>
+        </article>
+        <article class="card feature">
+            <div class="ico tone-5">🔎</div>
+            <h3>Поиск и категории</h3>
+            <p>Находите нужное по названию, описанию или категории за пару секунд.</p>
+        </article>
+        <article class="card feature">
+            <div class="ico tone-3">🖨️</div>
+            <h3>Сохранение в PDF</h3>
+            <p>Распечатайте инструкцию или сохраните её в PDF, чтобы пользоваться без интернета.</p>
+        </article>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <span class="eyebrow">Как это работает</span>
+        <h2>Три шага до результата</h2>
+    </div>
+    <div class="how">
+        <div class="how-step">
+            <h3>Выберите инструкцию</h3>
+            <p>Откройте каталог и найдите то, что нужно: от установки Docker до справки в деканате.</p>
+        </div>
+        <div class="how-step">
+            <h3>Отмечайте шаги</h3>
+            <p>Идите по списку и ставьте галочки. Прогресс-бар покажет, сколько уже сделано.</p>
+        </div>
+        <div class="how-step">
+            <h3>Поделитесь опытом</h3>
+            <p>Оцените инструкцию или создайте свою улучшенную версию для других.</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-band">
+    <div>
+        <h2>Есть задача, в которой легко запутаться?</h2>
+        <p>Опишите её шагами — и она станет понятной для всех.</p>
+    </div>
+    <a class="btn btn-lg" asp-controller="Author" asp-action="Create">Создать инструкцию</a>
+</section>
