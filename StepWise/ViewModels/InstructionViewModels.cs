@@ -31,4 +31,8 @@ public class InstructionDetailsViewModel
     public double AverageRating { get; set; }
     public int RatingsCount { get; set; }
     public int? MyRating { get; set; }
+    public int? ForkedFromId { get; set; }
+    public string? ForkedFromTitle { get; set; }
+    public int ForksCount { get; set; }
+    public bool IsMine { get; set; }
 }

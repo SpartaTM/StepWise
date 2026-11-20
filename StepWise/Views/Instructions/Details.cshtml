@@ -8,6 +8,29 @@
 <h1>@Model.Title</h1>
 <p class="category">@Model.Category</p>
 <p>@Model.Description</p>
+@if (Model.ForkedFromTitle != null)
+{
+    <p class="forked-from">
+        Улучшенная версия инструкции
+        <a asp-action="Details" asp-route-id="@Model.ForkedFromId">«@Model.ForkedFromTitle»</a>
+    </p>
+}
+
+@if (Model.ForksCount > 0)
+{
+    <p class="forks-count">Улучшенных версий: @Model.ForksCount</p>
+}
+
+@if (Model.IsMine)
+{
+    <a asp-controller="Author" asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">Редактировать</a>
+}
+else
+{
+    <form asp-action="Fork" asp-route-id="@Model.Id" method="post" class="fork-form">
+        <button type="submit" class="btn-fork">Улучшить: создать свою копию</button>
+    </form>
+}
 
 <h2>Шаги (@Model.Steps.Count)</h2>
 <ol class="steps-list">
