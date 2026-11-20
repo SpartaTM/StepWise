@@ -12,7 +12,6 @@ public class AuthorController : Controller
 
     private readonly AppDbContext _db;
     private readonly ICurrentUser _currentUser;
-    // Временно. На 19.11 заменим на значение из куки
     private string CurrentAuthorId => _currentUser.UserId;
     private const int StepSlots = 10;
 
@@ -22,7 +21,6 @@ public class AuthorController : Controller
         _currentUser = currentUser;
     }
 
-    // /Author — список моих инструкций
     public IActionResult Index()
     {
         var items = _db.Instructions
@@ -41,7 +39,6 @@ public class AuthorController : Controller
         return View(items);
     }
 
-    // /Author/Create — показать пустую форму
     public IActionResult Create()
     {
         var model = new InstructionFormViewModel();
@@ -90,7 +87,6 @@ public class AuthorController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-    // /Author/Edit/5 — форма с текущими данными
     public IActionResult Edit(int id)
     {
         var instruction = _db.Instructions
@@ -151,7 +147,6 @@ public class AuthorController : Controller
         instruction.Description = model.Description.Trim();
         instruction.Category = model.Category.Trim();
 
-        // 1. Удаляем шаги, которые автор очистил в форме
         var keepIds = filledSteps
             .Where(s => s.Id.HasValue)
             .Select(s => s.Id!.Value)
@@ -159,7 +154,6 @@ public class AuthorController : Controller
         var toRemove = instruction.Steps.Where(s => !keepIds.Contains(s.Id)).ToList();
         _db.Steps.RemoveRange(toRemove);
 
-        // 2. Обновляем существующие шаги и добавляем новые
         for (int index = 0; index < filledSteps.Count; index++)
         {
             var item = filledSteps[index];
@@ -211,5 +205,66 @@ public class AuthorController : Controller
             .OrderBy(c => c)
             .ToList();
 
+    }
+    public IActionResult Analytics(int id)
+    {
+        // Смотреть аналитику может только автор своей инструкции
+        var instruction = _db.Instructions
+            .AsNoTracking()
+            .Include(i => i.Steps)
+            .FirstOrDefault(i => i.Id == id && i.AuthorId == CurrentAuthorId);
+
+        if (instruction == null)
+            return NotFound();
+
+        var started = _db.Progresses.Count(p => p.InstructionId == id);
+        var completed = _db.Progresses.Count(p => p.InstructionId == id && p.IsCompleted);
+
+        // Для каждого шага: сколько человек его отметили
+        var doneByStep = _db.ProgressSteps
+            .Where(ps => ps.Progress!.InstructionId == id)
+            .GroupBy(ps => ps.StepId)
+            .Select(g => new { StepId = g.Key, Count = g.Count() })
+            .ToDictionary(x => x.StepId, x => x.Count);
+
+        var steps = new List<StepAnalyticsViewModel>();
+        var previous = started;   // для первого шага сравниваем с числом начавших
+
+        foreach (var s in instruction.Steps.OrderBy(s => s.Order))
+        {
+            var done = doneByStep.TryGetValue(s.Id, out var count) ? count : 0;
+
+            steps.Add(new StepAnalyticsViewModel
+            {
+                Order = s.Order,
+                Title = s.Title,
+                DoneCount = done,
+                PercentOfStarted = started == 0 ? 0 : done * 100 / started,
+                DropFromPrevious = Math.Max(0, previous - done)
+            });
+
+            previous = done;
+        }
+
+        // Узкое место: шаг с самым большим падением
+        var maxDrop = steps.Count == 0 ? 0 : steps.Max(s => s.DropFromPrevious);
+        if (maxDrop > 0)
+            steps.First(s => s.DropFromPrevious == maxDrop).IsBottleneck = true;
+
+        var ratings = _db.Ratings.Where(r => r.InstructionId == id);
+        var ratingsCount = ratings.Count();
+
+        var model = new InstructionAnalyticsViewModel
+        {
+            InstructionId = instruction.Id,
+            Title = instruction.Title,
+            StartedCount = started,
+            CompletedCount = completed,
+            RatingsCount = ratingsCount,
+            AverageRating = ratingsCount == 0 ? 0 : ratings.Average(r => (double)r.Value),
+            Steps = steps
+        };
+
+        return View(model);
     }
 }
