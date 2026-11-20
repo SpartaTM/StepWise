@@ -47,6 +47,7 @@ else
                 <div class="author-item-actions">
                     <a class="btn btn-sm" asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
                     <a class="btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
+                    <a asp-action="Analytics" asp-route-id="@item.Id">Аналитика</a>
                     <form asp-action="Delete" asp-route-id="@item.Id" method="post"
                           onsubmit="return confirm('Удалить инструкцию?');">
                         <button type="submit" class="btn btn-sm btn-danger">Удалить</button>

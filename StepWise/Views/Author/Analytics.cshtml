@@ -1,0 +1,58 @@
+﻿@model StepWise.ViewModels.InstructionAnalyticsViewModel
+@{
+    ViewData["Title"] = "Аналитика: " + Model.Title;
+}
+
+<a asp-action="Index">← Мои инструкции</a>
+<h1>Аналитика: @Model.Title</h1>
+
+<div class="stats">
+    <div class="stat"><span class="stat-value">@Model.StartedCount</span> начали</div>
+    <div class="stat"><span class="stat-value">@Model.CompletedCount</span> прошли до конца</div>
+    <div class="stat"><span class="stat-value">@Model.CompletionPercent%</span> дошли до конца</div>
+    <div class="stat">
+        <span class="stat-value">@(Model.RatingsCount == 0 ? "—" : Model.AverageRating.ToString("0.0"))</span>
+        оценка (@Model.RatingsCount)
+    </div>
+</div>
+
+@if (Model.StartedCount == 0)
+{
+    <p>Пока никто не проходил эту инструкцию.</p>
+}
+else
+{
+    <table class="analytics-table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Шаг</th>
+                <th>Отметили</th>
+                <th>Потеряно</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.Steps)
+            {
+                <tr class="@(s.IsBottleneck ? "bottleneck" : "")">
+                    <td>@s.Order</td>
+                    <td>@s.Title</td>
+                    <td>
+                        <div class="bar-wrap"><div class="bar" style="width: @s.PercentOfStarted%"></div></div>
+                        @s.DoneCount из @Model.StartedCount (@s.PercentOfStarted%)
+                    </td>
+                    <td>@(s.DropFromPrevious > 0 ? "−" + s.DropFromPrevious : "")</td>
+                    <td>@if (s.IsBottleneck) {
+                        <strong>Узкое место</strong>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p class="note">
+    «Потеряно» это на сколько человек меньше отметили шаг, чем предыдущий.
+    Шаг с наибольшей потерей помечен как узкое место: здесь инструкцию чаще всего бросают.
+</p>
+}
