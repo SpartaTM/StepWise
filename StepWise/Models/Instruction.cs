@@ -12,4 +12,5 @@ public class Instruction
 
     public List<Step> Steps { get; set; } = new();
     public List<Rating> Ratings { get; set; } = new();
+    public int? ForkedFromId { get; set; }
 }
