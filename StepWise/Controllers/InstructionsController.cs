@@ -95,6 +95,17 @@ public class InstructionsController : Controller
             .Select(r => (int?)r.Value)
             .FirstOrDefault();
 
+        string? forkedFromTitle = null;
+        if (instruction.ForkedFromId != null)
+        {
+            forkedFromTitle = _db.Instructions
+                .Where(i => i.Id == instruction.ForkedFromId)
+                .Select(i => i.Title)
+                .FirstOrDefault();
+        }
+
+        var forksCount = _db.Instructions.Count(i => i.ForkedFromId == id);
+
         var model = new InstructionDetailsViewModel
         {
             Id = instruction.Id,
@@ -114,6 +125,10 @@ public class InstructionsController : Controller
             RatingsCount = ratingsCount,
             AverageRating = average,
             MyRating = myRating,
+            ForkedFromId = forkedFromTitle == null ? null : instruction.ForkedFromId,
+            ForkedFromTitle = forkedFromTitle,
+            ForksCount = forksCount,
+            IsMine = instruction.AuthorId == _currentUser.UserId
         };
 
         return View(model);
@@ -154,5 +169,47 @@ public class InstructionsController : Controller
         _db.SaveChanges();
 
         return RedirectToAction(nameof(Details), new { id });
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Fork(int id)
+    {
+        var original = _db.Instructions
+            .AsNoTracking()
+            .Include(i => i.Steps)
+            .FirstOrDefault(i => i.Id == id);
+
+        if (original == null)
+            return NotFound();
+
+        var userId = _currentUser.UserId;
+
+        if (original.AuthorId == userId)
+            return RedirectToAction("Edit", "Author", new { id });
+
+        var title = original.Title.Length > 90 ? original.Title[..90] : original.Title;
+
+        var copy = new Instruction
+        {
+            Title = title + " (копия)",
+            Description = original.Description,
+            Category = original.Category,
+            AuthorId = userId,
+            ForkedFromId = original.Id,
+            Steps = original.Steps
+                .OrderBy(s => s.Order)
+                .Select(s => new Step
+                {
+                    Order = s.Order,
+                    Title = s.Title,
+                    Description = s.Description
+                })
+                .ToList()
+        };
+
+        _db.Instructions.Add(copy);
+        _db.SaveChanges();
+
+        return RedirectToAction("Edit", "Author", new { id = copy.Id });
     }
 }
