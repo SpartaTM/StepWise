@@ -71,20 +71,28 @@
             <div class="aside-actions">
                 <a asp-controller="Player" asp-action="Index" asp-route-instructionId="@Model.Id" class="btn btn-primary btn-lg btn-block btn-start">Начать прохождение</a>
 
-                @if (Model.IsMine)
+                @if (CurrentUser.IsExpert)
                 {
-                    <a asp-controller="Author" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-block btn-edit">Редактировать</a>
-                }
-                else
-                {
-                    <form asp-action="Fork" asp-route-id="@Model.Id" method="post" class="fork-form">
-                        <button type="submit" class="btn btn-block btn-fork">Улучшить: создать свою копию</button>
-                    </form>
+                    if (Model.IsMine)
+                    {
+                        <a asp-controller="Author" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-block">Редактировать</a>
+                    }
+                    else
+                    {
+                        <form asp-action="Fork" asp-route-id="@Model.Id" method="post" class="fork-form">
+                            <button type="submit" class="btn btn-block">@await Html.PartialAsync("_Icon", "fork") Улучшить: создать копию</button>
+                        </form>
+                    }
                 }
 
                 <button type="button" class="btn btn-ghost btn-block no-print" onclick="window.print()">@await Html.PartialAsync("_Icon", "printer") Печать / сохранить в PDF</button>
             </div>
-            @if (!Model.IsMine)
+
+            @if (!CurrentUser.IsExpert)
+            {
+                <p class="aside-hint">Хотите улучшить эту инструкцию? Переключитесь на режим эксперта в шапке сайта.</p>
+            }
+            else if (!Model.IsMine)
             {
                 <p class="aside-hint">Копию можно доработать под себя — оригинал останется без изменений.</p>
             }

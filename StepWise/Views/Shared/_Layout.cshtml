@@ -27,8 +27,22 @@
 
             <nav class="main-nav" id="main-nav" aria-label="Основная навигация">
                 <a class="nav-link @Active("Instructions", "Player")" asp-controller="Instructions" asp-action="Index">Каталог</a>
-                <a class="nav-link @Active("Author")" asp-controller="Author" asp-action="Index">Мои инструкции</a>
-                <a class="btn btn-primary btn-sm header-cta" asp-controller="Author" asp-action="Create">+ Создать инструкцию</a>
+
+                @if (CurrentUser.IsExpert)
+                {
+                    <a class="nav-link @Active("Author")" asp-controller="Author" asp-action="Index">Мои инструкции</a>
+                }
+
+                <form asp-controller="Account" asp-action="SetRole" method="post" class="role-switch" role="group" aria-label="Режим просмотра">
+                    <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                    <button type="submit" name="role" value="student" class="@(CurrentUser.IsExpert ? "" : "active")" aria-pressed="@(CurrentUser.IsExpert ? "false" : "true")">Ученик</button>
+                    <button type="submit" name="role" value="expert" class="@(CurrentUser.IsExpert ? "active" : "")" aria-pressed="@(CurrentUser.IsExpert ? "true" : "false")">Эксперт</button>
+                </form>
+
+                @if (CurrentUser.IsExpert)
+                {
+                    <a class="btn btn-primary btn-sm header-cta" asp-controller="Author" asp-action="Create">+ Создать инструкцию</a>
+                }
             </nav>
 
             <button class="burger" type="button" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
@@ -54,5 +68,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    
 </body>
+
 </html>
