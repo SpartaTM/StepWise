@@ -21,7 +21,7 @@
     <!-- Поиск -->
     <form asp-action="Index" method="get" class="search-form" role="search">
         <label class="search-field">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+            @await Html.PartialAsync("_Icon", "search")
             <input type="text"
                    name="search"
                    value="@search"
@@ -85,7 +85,7 @@
 @if (!Model.Any())
 {
     <div class="empty-state">
-        <div class="emoji">🔍</div>
+        <div class="empty-icon">@await Html.PartialAsync("_Icon", "search")</div>
         <h3>Ничего не найдено</h3>
         <p>Попробуйте изменить запрос или сбросить фильтры. Можно также создать свою инструкцию.</p>
         <div>
@@ -121,10 +121,10 @@ else
 
                 <div class="card-meta">
                     <span class="step-count">
-                        <span class="step-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        @await Html.PartialAsync("_Icon", "list")
                         Шагов: @item.StepsCount
                     </span>
-                    <span class="card-go" aria-hidden="true">→</span>
+                    <span class="card-go" aria-hidden="true">@await Html.PartialAsync("_Icon", "arrow-right")</span>
                 </div>
             </article>
         }

@@ -15,7 +15,7 @@
 @if (!Model.Any())
 {
     <div class="empty-state">
-        <div class="emoji">✍️</div>
+        <div class="empty-icon">@await Html.PartialAsync("_Icon", "pencil")</div>
         <h3>Пока нет ни одной инструкции</h3>
         <p>Создайте первую: опишите задачу шагами, и другие смогут проходить её с прогресс-баром.</p>
         <a asp-action="Create" class="btn btn-primary btn-lg">Создать первую инструкцию</a>
@@ -34,7 +34,7 @@ else
         {
             <li class="author-item">
                 <div class="author-item-main">
-                    <span class="badge-tile tone-@((item.Category ?? "").Sum(ch => (int)ch) % 6)">@(string.IsNullOrEmpty(item.Title) ? "?" : item.Title.Substring(0, 1).ToUpper())</span>
+                    <span class="badge-tile">@(string.IsNullOrEmpty(item.Title) ? "?" : item.Title.Substring(0, 1).ToUpper())</span>
                     <div>
                         <h3><a asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h3>
                         <div class="sub">
@@ -47,7 +47,7 @@ else
                 <div class="author-item-actions">
                     <a class="btn btn-sm" asp-controller="Instructions" asp-action="Details" asp-route-id="@item.Id">Открыть</a>
                     <a class="btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">Редактировать</a>
-                    <a asp-action="Analytics" asp-route-id="@item.Id">Аналитика</a>
+                    <a class="btn btn-sm" asp-action="Analytics" asp-route-id="@item.Id">@await Html.PartialAsync("_Icon", "chart") Аналитика</a>
                     <form asp-action="Delete" asp-route-id="@item.Id" method="post"
                           onsubmit="return confirm('Удалить инструкцию?');">
                         <button type="submit" class="btn btn-sm btn-danger">Удалить</button>

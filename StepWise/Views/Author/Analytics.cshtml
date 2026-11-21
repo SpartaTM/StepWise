@@ -1,58 +1,114 @@
-﻿@model StepWise.ViewModels.InstructionAnalyticsViewModel
+@model StepWise.ViewModels.InstructionAnalyticsViewModel
 @{
     ViewData["Title"] = "Аналитика: " + Model.Title;
+    var bottleneck = Model.Steps.FirstOrDefault(s => s.IsBottleneck);
 }
 
-<a asp-action="Index">← Мои инструкции</a>
-<h1>Аналитика: @Model.Title</h1>
+<a class="back-link" asp-action="Index">← Мои инструкции</a>
 
-<div class="stats">
-    <div class="stat"><span class="stat-value">@Model.StartedCount</span> начали</div>
-    <div class="stat"><span class="stat-value">@Model.CompletedCount</span> прошли до конца</div>
-    <div class="stat"><span class="stat-value">@Model.CompletionPercent%</span> дошли до конца</div>
-    <div class="stat">
-        <span class="stat-value">@(Model.RatingsCount == 0 ? "—" : Model.AverageRating.ToString("0.0"))</span>
-        оценка (@Model.RatingsCount)
+<div class="page-head page-head-row">
+    <div>
+        <span class="eyebrow">Аналитика</span>
+        <h1>@Model.Title</h1>
+        <p>Где читатели останавливаются и что стоит улучшить.</p>
+    </div>
+    <div class="head-actions">
+        <a class="btn" asp-controller="Instructions" asp-action="Details" asp-route-id="@Model.InstructionId">Открыть</a>
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.InstructionId">Редактировать</a>
+    </div>
+</div>
+
+<!-- Ключевые показатели -->
+<div class="kpis">
+    <div class="kpi">
+        <span class="kpi-icon">@await Html.PartialAsync("_Icon", "users")</span>
+        <b class="stat-value">@Model.StartedCount</b>
+        <span>начали проходить</span>
+    </div>
+    <div class="kpi">
+        <span class="kpi-icon">@await Html.PartialAsync("_Icon", "flag")</span>
+        <b class="stat-value">@Model.CompletedCount</b>
+        <span>прошли до конца</span>
+    </div>
+    <div class="kpi">
+        <span class="kpi-icon">@await Html.PartialAsync("_Icon", "check-circle")</span>
+        <b class="stat-value">@Model.CompletionPercent%</b>
+        <span>доходят до конца</span>
+        <div class="progress-wrap kpi-bar" aria-hidden="true"><div class="progress-bar" style="width: @Model.CompletionPercent%"></div></div>
+    </div>
+    <div class="kpi">
+        <span class="kpi-icon">@await Html.PartialAsync("_Icon", "star")</span>
+        <b class="stat-value">@(Model.RatingsCount == 0 ? "—" : Model.AverageRating.ToString("0.0"))</b>
+        <span>оценка (@Model.RatingsCount)</span>
     </div>
 </div>
 
 @if (Model.StartedCount == 0)
 {
-    <p>Пока никто не проходил эту инструкцию.</p>
+    <div class="empty-state">
+        <div class="empty-icon">@await Html.PartialAsync("_Icon", "chart")</div>
+        <h3>Пока нет данных</h3>
+        <p>Как только кто-нибудь начнёт проходить инструкцию, здесь появится воронка по шагам и узкие места.</p>
+        <div>
+            <a class="btn btn-primary" asp-controller="Instructions" asp-action="Details" asp-route-id="@Model.InstructionId">Открыть инструкцию</a>
+        </div>
+    </div>
 }
 else
 {
-    <table class="analytics-table">
-        <thead>
-            <tr>
-                <th>№</th>
-                <th>Шаг</th>
-                <th>Отметили</th>
-                <th>Потеряно</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (bottleneck != null)
+    {
+        <div class="callout" role="note">
+            <span class="callout-icon">@await Html.PartialAsync("_Icon", "alert")</span>
+            <div>
+                <strong>Узкое место: шаг @bottleneck.Order «@bottleneck.Title»</strong>
+                <p>Здесь теряется больше всего читателей: на @bottleneck.DropFromPrevious меньше, чем на предыдущем шаге. Попробуйте упростить или разбить этот шаг.</p>
+            </div>
+            <a class="btn btn-sm" asp-action="Edit" asp-route-id="@Model.InstructionId">Исправить</a>
+        </div>
+    }
+
+    <section class="card funnel-card">
+        <div class="form-section-title">
+            <h2>Воронка по шагам</h2>
+            <span class="tag">Шагов: @Model.Steps.Count</span>
+        </div>
+
+        <ol class="funnel">
             @foreach (var s in Model.Steps)
             {
-                <tr class="@(s.IsBottleneck ? "bottleneck" : "")">
-                    <td>@s.Order</td>
-                    <td>@s.Title</td>
-                    <td>
-                        <div class="bar-wrap"><div class="bar" style="width: @s.PercentOfStarted%"></div></div>
-                        @s.DoneCount из @Model.StartedCount (@s.PercentOfStarted%)
-                    </td>
-                    <td>@(s.DropFromPrevious > 0 ? "−" + s.DropFromPrevious : "")</td>
-                    <td>@if (s.IsBottleneck) {
-                        <strong>Узкое место</strong>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<p class="note">
-    «Потеряно» это на сколько человек меньше отметили шаг, чем предыдущий.
-    Шаг с наибольшей потерей помечен как узкое место: здесь инструкцию чаще всего бросают.
-</p>
+                <li class="funnel-row @(s.IsBottleneck ? "is-bottleneck" : "")">
+                    <span class="funnel-num">@s.Order</span>
+                    <div class="funnel-main">
+                        <div class="funnel-title">
+                            <strong>@s.Title</strong>
+                            @if (s.IsBottleneck)
+                            {
+                                <span class="chip chip-danger">Узкое место</span>
+                            }
+                        </div>
+                        <div class="funnel-track" role="img" aria-label="Отметили @s.DoneCount из @Model.StartedCount">
+                            <div class="funnel-fill" style="width: @s.PercentOfStarted%"></div>
+                        </div>
+                        <span class="funnel-meta">@s.DoneCount из @Model.StartedCount · @s.PercentOfStarted%</span>
+                    </div>
+                    <div class="funnel-drop">
+                        @if (s.DropFromPrevious > 0)
+                        {
+                            <span class="drop-badge">−@s.DropFromPrevious</span>
+                        }
+                        else
+                        {
+                            <span class="drop-none">—</span>
+                        }
+                    </div>
+                </li>
+            }
+        </ol>
+
+        <p class="note">
+            «Потеряно» — на сколько человек меньше отметили шаг, чем предыдущий.
+            Шаг с наибольшей потерей помечен как узкое место: здесь инструкцию чаще всего бросают.
+        </p>
+    </section>
 }
