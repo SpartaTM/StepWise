@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
+using StepWise.Filters;
 using StepWise.Models;
-using StepWise.ViewModels;
 using StepWise.Services;
+using StepWise.ViewModels;
 
 namespace StepWise.Controllers;
 
+[ExpertOnly]
 public class AuthorController : Controller
 {
 

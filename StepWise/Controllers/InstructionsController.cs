@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepWise.Data;
+using StepWise.Filters;
 using StepWise.Models;
 using StepWise.Services;
 using StepWise.ViewModels;
@@ -172,6 +173,7 @@ public class InstructionsController : Controller
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [ExpertOnly]
     public IActionResult Fork(int id)
     {
         var original = _db.Instructions

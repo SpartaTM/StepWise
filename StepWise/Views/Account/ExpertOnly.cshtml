@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Только для экспертов";
+}
+
+<div class="empty-state">
+    <div class="empty-icon">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" /><path d="M9.5 12l2 2 3.5-4" /></svg>
+    </div>
+    <h3>Эта страница для экспертов</h3>
+    <p>Эксперты создают и улучшают инструкции и смотрят аналитику. Ученики проходят инструкции и оценивают их.</p>
+    <div>
+        <form asp-action="SetRole" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+            <button type="submit" name="role" value="expert" class="btn btn-primary">Переключиться на режим эксперта</button>
+        </form>
+        <a class="btn" asp-controller="Instructions" asp-action="Index">В каталог</a>
+    </div>
+</div>
