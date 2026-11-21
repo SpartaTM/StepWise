@@ -1,0 +1,58 @@
+@* SVG-иконки (штриховые, 24×24). Использование: @await Html.PartialAsync("_Icon", "check") *@
+@model string
+@{
+    string cls = "icon";
+}
+<svg class="@cls" viewBox="0 0 24 24" aria-hidden="true">
+    @switch (Model)
+    {
+        case "check":
+            <path d="M5 13l4 4L19 7" />
+            break;
+        case "check-circle":
+            <circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.7 2.7L16 9.5" />
+            break;
+        case "list":
+            <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+            break;
+        case "save":
+            <path d="M6 4h12v17l-6-4-6 4V4z" />
+            break;
+        case "pencil":
+            <path d="M4 20h4L19 9a2.8 2.8 0 00-4-4L4 16v4zM13.5 6.5l4 4" />
+            break;
+        case "star":
+            <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.9L12 3.5z" />
+            break;
+        case "search":
+            <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
+            break;
+        case "printer":
+            <path d="M7 9V4h10v5M7 17H5a1 1 0 01-1-1v-5a2 2 0 012-2h12a2 2 0 012 2v5a1 1 0 01-1 1h-2" /><rect x="7" y="14" width="10" height="6" rx="1" />
+            break;
+        case "fork":
+            <circle cx="6" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="8" r="2" /><path d="M6 8v8M18 10c0 4-6 3-12 6" />
+            break;
+        case "bulb":
+            <path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z" />
+            break;
+        case "document":
+            <path d="M7 3h7l5 5v13H7zM14 3v5h5" />
+            break;
+        case "chart":
+            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+            break;
+        case "alert":
+            <path d="M12 4l9 16H3L12 4zM12 10v4M12 17h.01" />
+            break;
+        case "users":
+            <circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0113 0M16 4.8a3.5 3.5 0 010 6.4M18 14.2a6.5 6.5 0 013.5 5.8" />
+            break;
+        case "flag":
+            <path d="M5 21V4M5 4h11l-2 4 2 4H5" />
+            break;
+        case "arrow-right":
+            <path d="M5 12h14M13 6l6 6-6 6" />
+            break;
+    }
+</svg>
