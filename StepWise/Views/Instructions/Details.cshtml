@@ -12,7 +12,7 @@
                 <partial name="_CategoryChip" model="Model.Category" />
                 @if (Model.IsMine)
                 {
-                    <span class="chip tone-1">Ваша инструкция</span>
+                    <span class="chip chip-success">Ваша инструкция</span>
                 }
             </div>
 
@@ -20,14 +20,14 @@
             <p class="lead">@Model.Description</p>
 
             <div class="details-meta">
-                <span>📋 Шагов: @Model.Steps.Count</span>
+                <span>@await Html.PartialAsync("_Icon", "list") Шагов: @Model.Steps.Count</span>
                 @if (Model.RatingsCount > 0)
                 {
-                    <span><span style="color:var(--amber)">★</span> @Model.AverageRating.ToString("0.0") (@Model.RatingsCount)</span>
+                    <span><span style="color:var(--star)">★</span> @Model.AverageRating.ToString("0.0") (@Model.RatingsCount)</span>
                 }
                 @if (Model.ForksCount > 0)
                 {
-                    <span class="forks-count">🔀 Улучшенных версий: @Model.ForksCount</span>
+                    <span class="forks-count">@await Html.PartialAsync("_Icon", "fork") Улучшенных версий: @Model.ForksCount</span>
                 }
             </div>
 
@@ -36,7 +36,7 @@
             @if (Model.ForkedFromTitle != null)
             {
                 <p class="notice forked-from">
-                    <span aria-hidden="true">🔀</span>
+                    @await Html.PartialAsync("_Icon", "fork")
                     <span>
                         Улучшенная версия инструкции
                         <a asp-action="Details" asp-route-id="@Model.ForkedFromId">«@Model.ForkedFromTitle»</a>
@@ -82,7 +82,7 @@
                     </form>
                 }
 
-                <button type="button" class="btn btn-ghost btn-block no-print" onclick="window.print()">🖨️ Печать / сохранить в PDF</button>
+                <button type="button" class="btn btn-ghost btn-block no-print" onclick="window.print()">@await Html.PartialAsync("_Icon", "printer") Печать / сохранить в PDF</button>
             </div>
             @if (!Model.IsMine)
             {
