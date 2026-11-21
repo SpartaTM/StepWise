@@ -29,9 +29,19 @@ public class InstructionsController : Controller
         // Поиск по названию и описанию
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(i =>
-                i.Title.Contains(search) ||
-                i.Description.Contains(search));
+            var term = search.Trim();
+
+            var matchedIds = _db.Instructions
+                .AsNoTracking()
+                .Select(i => new { i.Id, i.Title, i.Description, i.Category })
+                .AsEnumerable()
+                .Where(i => i.Title.Contains(term, StringComparison.OrdinalIgnoreCase)
+                         || i.Description.Contains(term, StringComparison.OrdinalIgnoreCase)
+                         || i.Category.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .Select(i => i.Id)
+                .ToList();
+
+            query = query.Where(i => matchedIds.Contains(i.Id));
         }
 
         // Если категория выбрана, оставляем только её
